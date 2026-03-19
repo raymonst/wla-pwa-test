@@ -581,7 +581,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255,255,255,0.95);
+    height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    background: rgba(255,255,255,0.97);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid rgba(176,184,222,0.25);
@@ -589,8 +590,8 @@
     display: flex;
     align-items: flex-start;
     padding-top: var(--space-300);
-    padding-bottom: env(safe-area-inset-bottom);
-    z-index: 5;
+    padding-bottom: max(env(safe-area-inset-bottom), 12px);
+    z-index: 20;
   }
   .nav-item {
     flex: 1;
@@ -621,15 +622,11 @@
   .nav-label--active   { color: var(--color-bg-fill-brand); }  /* color/background/fill/brand */
   .nav-label--inactive { color: var(--color-text-tertiary); }
 
-  .home-indicator {
-    position: absolute;
-    bottom: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 132px;
-    height: 4px;
-    background: black;
-    border-radius: 100px;
+
+
+  /* ── NAV HEIGHT CONSTANT ─────────────────────────────────── */
+  :root {
+    --nav-h: 80px; /* bottom nav height, not counting safe area */
   }
 
   /* ── PAGE TRANSITION SYSTEM ──────────────────────────────── */
@@ -641,12 +638,15 @@
     height: 100dvh;
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
   .page {
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--nav-h);
     background: var(--color-primary-50);
     display: flex;
     flex-direction: column;
@@ -773,7 +773,10 @@
   /* Tab pages sit stacked; we fade between them               */
   .tab-page {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--nav-h);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -815,7 +818,7 @@
   }
   .pay-title {
     font-family: var(--font-body);
-    font-weight: var(--w-bold);
+    font-weight: 700;
     font-size: 24px;
     line-height: 32px;
     letter-spacing: 0;
@@ -918,7 +921,10 @@
   /* ── PLACEHOLDER / COMING SOON PAGES ──────────────────────── */
   .placeholder-page {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--nav-h);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1195,60 +1201,6 @@
 
   </div><!-- /scroll-content -->
 
-  <!-- ── BOTTOM NAV ── -->
-  <nav class="bottom-nav" id="main-nav">
-
-    <!-- Wallet -->
-    <div class="nav-item nav-active" id="nav-wallet" onclick="switchTab('wallet')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon" id="nav-wallet-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M21 7H5a2 2 0 00-2 2v9a2 2 0 002 2h16a1 1 0 001-1V8a1 1 0 00-1-1z" fill="#001b96"/>
-          <circle cx="17.5" cy="13.5" r="1.5" fill="white"/>
-          <path d="M5 7l1.5-3h11L19 7" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <span class="nav-label nav-label--active" id="nav-wallet-label">Wallet</span>
-      <div class="nav-dot"></div>
-    </div>
-
-    <!-- Payment -->
-    <div class="nav-item" id="nav-payment" onclick="switchTab('payment')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon" id="nav-payment-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#727272" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <span class="nav-label nav-label--inactive" id="nav-payment-label">Payment</span>
-      <div class="nav-dot"></div>
-    </div>
-
-    <!-- Card -->
-    <div class="nav-item" id="nav-card" onclick="alert('Card coming soon')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="5" width="20" height="14" rx="2" stroke="#727272" stroke-width="1.7"/>
-          <path d="M2 10h20" stroke="#727272" stroke-width="1.7"/>
-          <path d="M6 15h5" stroke="#727272" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <span class="nav-label nav-label--inactive">Card</span>
-      <div class="nav-dot"></div>
-    </div>
-
-    <!-- Perks -->
-    <div class="nav-item" id="nav-perks" onclick="alert('Perks coming soon')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2l2.9 7.26L22 10.27l-5.46 5.32 1.29 7.51L12 19.27l-5.83 3.83 1.29-7.51L2 10.27l7.1-1.01L12 2z" stroke="#727272" stroke-width="1.7" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <span class="nav-label nav-label--inactive">Perks</span>
-      <div class="nav-dot"></div>
-    </div>
-
-    <div class="home-indicator"></div>
-  </nav>
-
 
 </div><!-- /page-home -->
 
@@ -1490,27 +1442,23 @@
     <div class="pay-tiles">
 
       <div class="pay-tile" onclick="navigateTo('transfer-money')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#001b96" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
+          <img src="https://www.figma.com/api/mcp/asset/be200365-d79d-4278-be21-27459735f435" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        </div>
         <span class="pay-tile-label">Transfer money</span>
       </div>
 
       <div class="pay-tile" onclick="navigateTo('transfer-savings')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="7" width="20" height="14" rx="2" stroke="#001b96" stroke-width="1.7"/>
-          <path d="M16 7V5a2 2 0 00-4 0v2" stroke="#001b96" stroke-width="1.7" stroke-linecap="round"/>
-          <circle cx="12" cy="14" r="2" stroke="#001b96" stroke-width="1.7"/>
-          <path d="M12 16v1" stroke="#001b96" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
+        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
+          <img src="https://www.figma.com/api/mcp/asset/fecaa7db-3f31-4d29-bfa9-c44c7c56152e" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        </div>
         <span class="pay-tile-label">Transfer to savings</span>
       </div>
 
       <div class="pay-tile" onclick="navigateTo('receive-money')">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3v14M7 12l5 5 5-5" stroke="#001b96" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M5 21h14" stroke="#001b96" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
+        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
+          <img src="https://www.figma.com/api/mcp/asset/d077d14c-32c3-4fa2-9f2d-3cd4859e0054" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        </div>
         <span class="pay-tile-label">Receive money</span>
       </div>
 
@@ -1615,6 +1563,60 @@
     <span class="placeholder-sub">This screen is coming soon.</span>
   </div>
 </div>
+
+
+<!-- ── PERSISTENT BOTTOM NAV (app-shell level) ─────────────────────── -->
+<nav class="bottom-nav" id="main-nav">
+
+    <!-- Wallet -->
+    <div class="nav-item nav-active" id="nav-wallet" onclick="switchTab('wallet')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon" id="nav-wallet-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M21 7H5a2 2 0 00-2 2v9a2 2 0 002 2h16a1 1 0 001-1V8a1 1 0 00-1-1z" fill="#001b96"/>
+          <circle cx="17.5" cy="13.5" r="1.5" fill="white"/>
+          <path d="M5 7l1.5-3h11L19 7" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="nav-label nav-label--active" id="nav-wallet-label">Wallet</span>
+      <div class="nav-dot"></div>
+    </div>
+
+    <!-- Payment -->
+    <div class="nav-item" id="nav-payment" onclick="switchTab('payment')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon" id="nav-payment-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#727272" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="nav-label nav-label--inactive" id="nav-payment-label">Payment</span>
+      <div class="nav-dot"></div>
+    </div>
+
+    <!-- Card -->
+    <div class="nav-item" id="nav-card" onclick="alert('Card coming soon')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="5" width="20" height="14" rx="2" stroke="#727272" stroke-width="1.7"/>
+          <path d="M2 10h20" stroke="#727272" stroke-width="1.7"/>
+          <path d="M6 15h5" stroke="#727272" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="nav-label nav-label--inactive">Card</span>
+      <div class="nav-dot"></div>
+    </div>
+
+    <!-- Perks -->
+    <div class="nav-item" id="nav-perks" onclick="alert('Perks coming soon')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2l2.9 7.26L22 10.27l-5.46 5.32 1.29 7.51L12 19.27l-5.83 3.83 1.29-7.51L2 10.27l7.1-1.01L12 2z" stroke="#727272" stroke-width="1.7" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="nav-label nav-label--inactive">Perks</span>
+      <div class="nav-dot"></div>
+    </div>
+
+</nav>
 
 </div><!-- /app-shell -->
 
