@@ -577,10 +577,12 @@
      BOTTOM NAV
   ───────────────────────────────────────────── */
   .bottom-nav {
-    position: absolute;
+    position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 500px;
     height: calc(var(--nav-h) + env(safe-area-inset-bottom));
     background: rgba(255,255,255,0.97);
     backdrop-filter: blur(10px);
@@ -636,10 +638,7 @@
     margin: 0 auto;
     height: 100vh;
     height: 100dvh;
-    overflow: hidden;
     position: relative;
-    display: flex;
-    flex-direction: column;
   }
   .page {
     position: absolute;
@@ -1578,7 +1577,7 @@
         </svg>
       </div>
       <span class="nav-label nav-label--active" id="nav-wallet-label">Wallet</span>
-      <div class="nav-dot"></div>
+      <div class="nav-dot" style="opacity:1"></div>
     </div>
 
     <!-- Payment -->
@@ -1589,7 +1588,7 @@
         </svg>
       </div>
       <span class="nav-label nav-label--inactive" id="nav-payment-label">Payment</span>
-      <div class="nav-dot"></div>
+      <div class="nav-dot" style="opacity:0"></div>
     </div>
 
     <!-- Card -->
@@ -1602,7 +1601,7 @@
         </svg>
       </div>
       <span class="nav-label nav-label--inactive">Card</span>
-      <div class="nav-dot"></div>
+      <div class="nav-dot" style="opacity:0"></div>
     </div>
 
     <!-- Perks -->
@@ -1613,7 +1612,7 @@
         </svg>
       </div>
       <span class="nav-label nav-label--inactive">Perks</span>
-      <div class="nav-dot"></div>
+      <div class="nav-dot" style="opacity:0"></div>
     </div>
 
 </nav>
@@ -1687,6 +1686,7 @@
 
   function switchTab(tab) {
     if (tab === activeTab) return;
+
     // Close any open drill-down pages first
     if (pageTx.classList.contains('slide-in')) {
       pageTx.classList.remove('slide-in');
@@ -1697,26 +1697,30 @@
       if (el) el.classList.remove('slide-in');
     });
 
-    const prev = activeTab;
     activeTab = tab;
 
-    // Cross-fade pages
+    // Cross-fade tab pages
     Object.entries(TAB_PAGES).forEach(([key, el]) => {
       el.classList.toggle('tab-active', key === tab);
     });
 
-    // Update nav items
+    // Update every nav item explicitly
     Object.entries(TAB_NAV_ITEMS).forEach(([key, el]) => {
       if (!el) return;
       const isActive = key === tab;
-      el.classList.toggle('nav-active', isActive);
-      // Swap label colour
+
+      // Label colour
       const label = el.querySelector('.nav-label');
       label.classList.toggle('nav-label--active', isActive);
       label.classList.toggle('nav-label--inactive', !isActive);
-      // Swap icon fill
+
+      // Active dot — set directly, don't rely on CSS cascade timing
+      const dot = el.querySelector('.nav-dot');
+      if (dot) dot.style.opacity = isActive ? '1' : '0';
+
+      // Icon swap
       const svgEl = el.querySelector('.nav-icon svg');
-      if (NAV_ICON_SVG[key]) {
+      if (svgEl && NAV_ICON_SVG[key]) {
         svgEl.innerHTML = isActive ? NAV_ICON_SVG[key].active : NAV_ICON_SVG[key].inactive;
       }
     });
