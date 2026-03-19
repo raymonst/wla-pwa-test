@@ -477,6 +477,15 @@
     color: var(--color-text-primary);
     min-width: 0;
   }
+  .tx-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    color: var(--color-text-primary);
+    min-width: 0;
+  }
+
   .tx-name {
     /* Element/List Item */
     font-family: var(--font-list-item-family);
@@ -650,7 +659,7 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: var(--nav-h);
+    bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
     background: var(--color-primary-50);
     display: flex;
     flex-direction: column;
@@ -661,7 +670,7 @@
   }
   .page--home { transform: translateX(0); z-index: 1; }
   .page--home.slide-out { transform: translateX(-28%); }
-  .page--transactions { transform: translateX(100%); z-index: 2; background: #fff; visibility: hidden; }
+  .page--transactions { transform: translateX(100%); z-index: 22; background: #fff; visibility: hidden; bottom: 0; }
   .page--transactions.slide-in { transform: translateX(0); box-shadow: -4px 0 24px rgba(0,0,0,0.12); visibility: visible; }
   .page--home::after {
     content: '';
@@ -768,7 +777,12 @@
     background: #fff;
     box-shadow: 0 0 0 1px rgba(176,184,222,0.25);
   }
-  .tx-group-card .tx-item { padding: var(--space-500) var(--space-400); }
+  .tx-group-card .tx-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-200);
+    padding: var(--space-500) var(--space-400);
+  }
   .tx-group-card .tx-item + .tx-item { border-top: 1px solid rgba(176,184,222,0.18); }
   .tx-amount--pending { color: var(--color-text-tertiary); }
 
@@ -780,7 +794,7 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: var(--nav-h);
+    bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -928,7 +942,7 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: var(--nav-h);
+    bottom: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -936,8 +950,8 @@
     will-change: transform;
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(100%);
-    visibility: hidden;  /* fully hidden until slid in */
-    z-index: 3;
+    visibility: hidden;
+    z-index: 23;
   }
   .placeholder-page.slide-in {
     visibility: visible;
@@ -989,7 +1003,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--space-300);
-    padding: var(--space-section-gap);
+    padding: var(--space-section-gap) var(--space-section-gap) max(env(safe-area-inset-bottom), var(--space-section-gap));
     color: var(--color-text-tertiary);
   }
   .placeholder-icon {
@@ -1024,16 +1038,19 @@
   .transfer-page {
     position: absolute;
     top: 0; left: 0; right: 0;
-    bottom: var(--nav-h);
-    display: flex;
-    flex-direction: column;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     background: #fff;
     will-change: transform;
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(100%);
     visibility: hidden;
-    z-index: 4;
+    z-index: 25;
   }
+  .transfer-page::-webkit-scrollbar { display: none; }
   .transfer-page.slide-in {
     transform: translateX(0);
     visibility: visible;
@@ -1047,7 +1064,9 @@
   /* Header */
   .tf-topbar {
     background: #fff;
-    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
     padding-top: env(safe-area-inset-top);
   }
   .tf-nav {
@@ -1085,7 +1104,6 @@
     justify-content: center;
     height: 130px;
     padding: 24px 16px;
-    flex-shrink: 0;
   }
   .tf-amount {
     font-family: 'Figtree', sans-serif;
@@ -1101,12 +1119,12 @@
   .tf-amount.over-limit { color: #e2231a; }
 
   /* From / To account selectors */
+
   .tf-accounts {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 0 20px 12px;
-    flex-shrink: 0;
   }
   .tf-account-group {
     display: flex;
@@ -1168,8 +1186,6 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     padding: 0 16px;
-    margin-top: auto;
-    flex-shrink: 0;
   }
   .tf-key {
     height: 64px;
@@ -1209,8 +1225,7 @@
 
   /* Review button */
   .tf-footer {
-    padding: 16px;
-    flex-shrink: 0;
+    padding: 16px 16px max(env(safe-area-inset-bottom), 16px);
   }
   .tf-review-btn {
     width: 100%;
@@ -1357,7 +1372,7 @@
   .review-page {
     position: absolute;
     top: 0; left: 0; right: 0;
-    bottom: var(--nav-h);
+    bottom: 0;
     display: flex;
     flex-direction: column;
     background: #fff;
@@ -1365,7 +1380,7 @@
     transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateX(100%);
     visibility: hidden;
-    z-index: 5;
+    z-index: 26;
   }
   .review-page.slide-in {
     transform: translateX(0);
@@ -1476,7 +1491,9 @@
   }
   .review-ref-input:focus { border-color: var(--color-primary-500); }
   .review-footer {
-    padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    padding: 16px 16px max(env(safe-area-inset-bottom), 16px);
+    display: flex; flex-direction: column; gap: 12px;
+    flex-shrink: 0;
   }
   .review-btn-edit {
     width: 100%; padding: 16px;
@@ -2045,7 +2062,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- Numpad -->
   <div class="tf-numpad" id="tf-numpad">
@@ -2129,6 +2145,8 @@
 </div>
 
 
+
+</div><!-- /app-shell -->
 <!-- ── PERSISTENT BOTTOM NAV (app-shell level) ─────────────────────── -->
 <nav class="bottom-nav" id="main-nav">
 
@@ -2263,7 +2281,6 @@
   </div>
 </div>
 
-</div><!-- /app-shell -->
 
 <script>
   // ── PAGE REFS ──────────────────────────────────────────────────────
