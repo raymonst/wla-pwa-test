@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Orbit">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 
 <!-- PWA: Theme color (colors browser chrome on Android) -->
 <meta name="theme-color" content="#001b96">
@@ -888,7 +888,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('./sw.js')
         .then(reg => console.log('[SW] Registered, scope:', reg.scope))
         .catch(err => console.warn('[SW] Registration failed:', err));
     });
