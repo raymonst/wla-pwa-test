@@ -1,9 +1,10 @@
 {
+  "id": "/pwa-test/",
   "name": "Orbit Wallet",
   "short_name": "Orbit",
   "description": "Your Orbit financial wallet",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/pwa-test/",
+  "scope": "/pwa-test/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#f7f8ff",
