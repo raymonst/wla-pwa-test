@@ -165,9 +165,14 @@
   ───────────────────────────────────────────── */
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    height: -webkit-fill-available;
+  }
+
   body {
     background: var(--color-primary-50);
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     min-height: 100dvh;
     font-family: var(--font-body-md-family);
     overflow: hidden;
@@ -649,6 +654,7 @@
     max-width: 500px;
     margin: 0 auto;
     height: 100vh;
+    height: -webkit-fill-available;
     height: 100dvh;
     position: relative;
     overflow: hidden;
