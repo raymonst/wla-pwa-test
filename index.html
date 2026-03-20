@@ -703,16 +703,19 @@
   .tx-back-btn {
     position: absolute;
     left: var(--space-400);
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border-radius: 50%;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0;
     -webkit-tap-highlight-color: transparent;
   }
-  .tx-back-btn:active { background: rgba(0,0,0,0.06); }
+  .tx-back-btn:active { opacity: 0.6; }
   .tx-page-title {
     font-family: var(--font-body);
     font-weight: var(--w-medium);
@@ -733,7 +736,7 @@
   .filter-bar {
     display: flex;
     gap: var(--space-200);
-    padding: var(--space-200) 0 var(--space-300);
+    padding: var(--space-200) 0 var(--space-600);
     overflow-x: auto;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
@@ -741,17 +744,20 @@
   .filter-bar::-webkit-scrollbar { display: none; }
   .filter-pill {
     height: 36px;
-    padding: 0 var(--space-300);
-    border-radius: var(--radius-button-small);
-    font-family: var(--font-body);
-    font-weight: var(--w-semi);
-    font-size: var(--size-button-sm);
-    line-height: 1;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
     white-space: nowrap;
     flex-shrink: 0;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
     -webkit-tap-highlight-color: transparent;
+    border: 1px solid transparent;
   }
   .filter-pill--on {
     background: var(--color-primary-500);
@@ -765,26 +771,23 @@
   }
   .tx-group { margin-bottom: var(--space-section-gap); }
   .tx-group-label {
-    font-family: var(--font-body);
-    font-weight: var(--w-bold);
-    font-size: var(--size-section-lg);
-    line-height: var(--lh-section-lg);
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
     color: var(--color-text-primary);
-    margin-bottom: var(--space-300);
+    margin-bottom: 12px;
   }
   .tx-group-card {
-    border-radius: var(--radius-container);
-    overflow: hidden;
     background: #fff;
-    box-shadow: 0 0 0 1px rgba(176,184,222,0.25);
   }
   .tx-group-card .tx-item {
     display: flex;
     align-items: center;
-    gap: var(--space-200);
-    padding: var(--space-500) var(--space-400);
+    gap: 8px;
+    padding: 20px 0;
   }
-  .tx-group-card .tx-item + .tx-item { border-top: 1px solid rgba(176,184,222,0.18); }
+  .tx-group-card .tx-item + .tx-item { border-top: none; }
   .tx-amount--pending { color: var(--color-text-tertiary); }
 
 
@@ -857,7 +860,7 @@
   .pay-tiles {
     display: flex;
     gap: var(--space-400);
-    padding: var(--space-section-gap) 0 var(--space-400);
+    padding: var(--space-section-gap) 0 var(--space-section-gap);
   }
   .pay-tile {
     flex: 1;
@@ -878,11 +881,15 @@
   .pay-tile-label {
     font-family: var(--font-body);
     font-weight: var(--w-semi);
-    font-size: 14px;
+    font-size: 16px;
     line-height: 20px;
     color: var(--color-text-primary);
     text-align: center;
     letter-spacing: 0;
+    min-height: 40px; /* always 2 lines × 20px line-height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Divider */
@@ -914,7 +921,7 @@
   .pay-list-text { flex: 1; display: flex; flex-direction: column; gap: var(--space-100); }
   .pay-list-title {
     font-family: var(--font-body);
-    font-weight: var(--w-semi);
+    font-weight: 600;
     font-size: var(--size-list-item);
     line-height: var(--lh-list-item);
     color: var(--color-text-primary);
@@ -1613,6 +1620,953 @@
     color: var(--color-text-inverse);
   }
 
+
+  /* ── CARD PAGE ────────────────────────────────────────────── */
+  .card-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-400);
+    height: 64px;
+  }
+  .card-page-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--color-text-primary);
+  }
+  .card-page-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px 0 calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section-gap);
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card-page-scroll::-webkit-scrollbar { display: none; }
+
+  /* Card flip container */
+  .card-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 0 var(--space-app-margin);
+  }
+  .card-flip-scene {
+    width: 100%;
+    max-width: 361px;
+    height: 229px;
+    perspective: 1000px;
+  }
+  .card-flip-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-flip-inner.flipped {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 0 1px rgba(25,25,25,0.2), 0 2px 10px rgba(25,25,25,0.14), 0 8px 16px rgba(25,25,25,0.08);
+  }
+  /* Card front — Orbit card design */
+  .card-face--front {
+    background: #111a3d;
+  }
+  .card-face--front .card-blobs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 12px;
+  }
+  .card-face--front .card-tone {
+    position: absolute;
+    width: 441px; height: 278px;
+    top: 50%; left: calc(50% + 37px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0.8;
+  }
+  .card-face--front .card-logo {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 2.5px;
+  }
+  .card-face--front .card-logo-text {
+    font-family: 'Cabin', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 20.833px;
+    color: #f0ecfd;
+    opacity: 0.9;
+    font-variation-settings: 'wdth' 100;
+  }
+
+  /* Card back */
+  .card-face--back {
+    background: linear-gradient(238deg, #050f2c 3.3%, #0d1635 62.5%, #0f182c 101.7%);
+    transform: rotateY(180deg);
+  }
+  .card-face--back .card-details {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(calc(-50% + 10.5px));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .card-detail-label {
+    font-family: 'Figtree', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-detail-value {
+    font-family: 'Courier New', 'Courier', monospace;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 22px;
+    color: #fff;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-detail-value.small {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+  .card-detail-copy {
+    width: 20px; height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-detail-copy:active { opacity: 1; }
+  .card-exp-cvc {
+    display: flex;
+    gap: 40px;
+  }
+  .card-detail-group { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Quick actions */
+  .card-quick-actions {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+  }
+  .card-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 82px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .card-action-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .card-action-icon:active { background: #001470; }
+  .card-action-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Add to Apple Wallet button */
+  .card-apple-wallet-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 361px;
+    padding: 8px 16px;
+    background: #1e1e1f;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-apple-wallet-btn:active { background: #111; }
+  .card-apple-wallet-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  /* Card tools section */
+  .card-tools-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+  }
+  .card-tools-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--color-text-primary);
+    padding: 0 var(--space-app-margin);
+  }
+  .card-tools-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .card-tool-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: var(--space-app-margin);
+    background: var(--color-primary-50);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-tool-row:active { background: #eef0ff; }
+  .card-tool-row-icon {
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-tool-row-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 16px 0;
+    border-top: 1px solid rgba(176,184,222,0.18);
+  }
+  .card-tool-row:first-child .card-tool-row-body { border-top: none; }
+  .card-tool-row-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+  }
+
+  /* Issuing statement */
+  .card-issuing-statement {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #5e5e5e;
+    text-align: center;
+    padding: 0 var(--space-app-margin);
+  }
+
+
+  /* Card page scroll */
+  .card-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px 0 calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .card-scroll::-webkit-scrollbar { display: none; }
+
+  /* Card header */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-400);
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .card-header-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--color-text-primary);
+  }
+
+  /* Card section (card + actions) */
+  .card-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 0 var(--space-app-margin);
+  }
+
+  /* The physical card */
+  .card-visual {
+    width: 100%;
+    max-width: 361px;
+    height: 229px;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    background: #111a3d;
+    box-shadow: 0 0 1px rgba(25,25,25,0.2), 0 2px 10px rgba(25,25,25,0.14), 0 8px 16px rgba(25,25,25,0.08);
+  }
+  .card-visual-tone {
+    position: absolute;
+    width: 248%; height: 221%;
+    top: -11%; left: -15%;
+    pointer-events: none;
+    opacity: 0.85;
+  }
+  .card-visual-logo {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 2.5px;
+  }
+  .card-visual-logo-text {
+    font-family: 'Cabin', sans-serif;
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 20.833px;
+    color: #f0ecfd;
+    opacity: 0.9;
+    font-variation-settings: 'wdth' 100;
+  }
+
+  /* Quick action buttons */
+  .card-actions {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+  }
+  .card-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 82px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-action-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--color-primary-500);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-action-icon:active { background: #001470; }
+  .card-action-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* Apple Wallet button */
+  .card-wallet-btn {
+    width: 100%;
+    max-width: 361px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #1e1e1f;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 24px;
+    color: #fff;
+  }
+  .card-wallet-btn:active { background: #111; }
+
+  /* Card tools list */
+  .card-tools {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0;
+  }
+  .card-tools-heading {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--color-text-primary);
+    padding: 0 var(--space-app-margin);
+  }
+  .card-tool-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-left: var(--space-app-margin);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: var(--color-primary-50);
+  }
+  .card-tool-item:active { background: #eef0ff; }
+  .card-tool-item-icon {
+    width: 24px; height: 24px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .card-tool-item-body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 16px 0;
+  }
+  .card-tool-item + .card-tool-item .card-tool-item-body {
+    border-top: 1px solid rgba(176,184,222,0.18);
+  }
+  .card-tool-item-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+  }
+
+  /* Issuing statement */
+  .card-issuing {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    color: #5e5e5e;
+    text-align: center;
+    padding: 0 var(--space-app-margin);
+  }
+
+
+  /* ── CARD FLIP ───────────────────────────────────────────────── */
+  .card-flip-scene {
+    width: 100%;
+    max-width: 361px;
+    height: 229px;
+    perspective: 900px;
+  }
+  .card-flip-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-flip-inner.flipped {
+    transform: rotateY(180deg);
+  }
+  .card-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 0 1px rgba(25,25,25,0.2),
+                0 2px 10px rgba(25,25,25,0.14),
+                0 8px 16px rgba(25,25,25,0.08);
+  }
+  /* front */
+  .card-face-front {
+    background: #111a3d;
+  }
+  /* back */
+  .card-face-back {
+    background: linear-gradient(238deg, #050f2c 3.3%, #0d1635 62.5%, #0f182c 101.7%);
+    transform: rotateY(180deg);
+  }
+  .card-back-overlay {
+    position: absolute;
+    inset: 0 0 0 -0.28%;
+    background: linear-gradient(166deg, rgba(11,11,11,0) 14.3%, rgba(11,11,11,0.2) 90.5%);
+  }
+  .card-back-details {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(calc(-50% + 10.5px));
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .card-back-name {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-back-number-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-back-number {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 22px;
+    color: #fff;
+    letter-spacing: 2px;
+  }
+  .card-back-exp-cvc {
+    display: flex;
+    gap: 40px;
+  }
+  .card-back-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .card-back-field-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: rgba(255,255,255,0.75);
+    letter-spacing: 0.5px;
+  }
+  .card-back-field-value-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .card-back-field-value {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 22px;
+    color: #fff;
+    letter-spacing: 1.5px;
+  }
+  .card-copy-btn {
+    width: 20px; height: 20px;
+    cursor: pointer;
+    opacity: 0.75;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card-copy-btn:active { opacity: 1; }
+
+
+  /* ── PERKS PAGE ──────────────────────────────────────────────── */
+  .perks-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 var(--space-app-margin) calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .perks-scroll::-webkit-scrollbar { display: none; }
+
+  .perks-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0;
+    height: 64px;
+    flex-shrink: 0;
+  }
+  .perks-header-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--color-text-primary);
+  }
+
+  /* Hero section */
+  .perks-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .perks-hero > div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;   /* space between headline and body text */
+  }
+  .perks-headline {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 36px;
+    color: var(--color-text-primary);
+    letter-spacing: 0;
+  }
+  .perks-subline {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #5e5e5e;
+  }
+
+  /* Cashback balance banner */
+  .perks-balance-banner {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .perks-balance-text { flex: 1; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .perks-balance-earned {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+  }
+  .perks-balance-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .perks-balance-link-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-primary-500);
+    white-space: nowrap;
+  }
+  .perks-balance-img {
+    width: 72px;
+    height: 58px;
+    object-fit: contain;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* Offer cards */
+  .perks-offers {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .perks-offer-card {
+    border-radius: 20px;
+    overflow: hidden;
+    height: 191px;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .perks-offer-card--shell {
+    background: #fffae0;
+    border-color: #fff0a3;
+  }
+  .perks-offer-card--evgo {
+    background: #e6f5f5;
+    border-color: #cfede8;
+  }
+  .perks-offer-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    height: 100%;
+    min-width: 0;
+  }
+  .perks-offer-details { display: flex; flex-direction: column; gap: 8px; }
+  .perks-offer-logo {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .perks-offer-logo img { width: 35px; height: 36px; object-fit: contain; }
+  .perks-offer-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: var(--color-text-primary);
+  }
+  .perks-offer-cta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .perks-offer-cta-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 20px;
+    color: var(--color-primary-500);
+    white-space: nowrap;
+  }
+  .perks-offer-image {
+    width: 148px;
+    height: 200px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+
+  /* ── TRANSACTION DETAIL PAGE ─────────────────────────────── */
+  .tx-detail-page {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #fff;
+    z-index: 24;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .tx-detail-page.slide-in {
+    transform: translateX(0);
+  }
+
+  /* Hero header */
+  .tx-detail-header {
+    position: relative;
+    background-color: var(--color-primary-500);
+    background-image: url('bg-transaction-details.png');
+    background-size: cover;
+    background-position: top left;
+    flex-shrink: 0;
+  }
+  .tx-detail-header-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-size: cover;
+    background-position: top left;
+  }
+  /* Top nav bar */
+  .tx-detail-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    padding: 0 var(--space-400);
+    padding-top: env(safe-area-inset-top);
+  }
+  .tx-detail-back {
+    position: absolute;
+    left: var(--space-400);
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; outline: none; padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tx-detail-back:active { opacity: 0.6; }
+  .tx-detail-nav-title {
+    font-family: var(--font-body-md-family);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 20px;
+    color: #fff;
+  }
+
+  /* Amount + icon section */
+  .tx-detail-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 24px var(--space-400) 60px;
+  }
+  .tx-detail-amount {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .tx-detail-amount-sign {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 44px;
+  }
+  .tx-detail-amount-value {
+    font-family: var(--font-body-md-family);
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 52px;
+  }
+
+  /* Merchant icon circle — overlaps the header/body boundary */
+  .tx-detail-icon-wrap {
+    position: relative;
+    z-index: 1;
+    margin-bottom: -30px; /* half of 60px circle = hangs over edge */
+    margin-top: 0;
+  }
+  .tx-detail-icon {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--color-bg-surface-brand);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Body */
+  .tx-detail-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+  }
+  .tx-detail-body::-webkit-scrollbar { display: none; }
+
+  /* Merchant info */
+  .tx-detail-merchant {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .tx-detail-merchant-name {
+    font-family: var(--font-body-md-family);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: var(--color-text-primary);
+    text-align: center;
+  }
+  .tx-detail-category-pill {
+    background: var(--color-bg-surface-brand);
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-family: var(--font-body-md-family);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-text-primary);
+  }
+
+  /* Detail fields */
+  .tx-detail-fields {
+    display: flex;
+    flex-direction: column;
+  }
+  .tx-detail-field {
+    background: #fff;
+    padding: 12px var(--space-400);
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+  .tx-detail-field-label {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #5e5e5e;
+  }
+  .tx-detail-field-value {
+    font-family: var(--font-body-md-family);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-text-primary);
+  }
+
+  /* Dispute button */
+  .tx-detail-dispute-btn {
+    background: #fff;
+    border: none;
+    border-radius: 999px;
+    height: 48px;
+    width: calc(100% - 32px);
+    margin: 0 var(--space-400);
+    font-family: var(--font-body-md-family);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    color: var(--color-text-primary);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tx-detail-dispute-btn:active { opacity: 0.7; }
+
 </style>
 </head>
 <body>
@@ -1657,14 +2611,20 @@
             <div class="card-bg"></div>
             <div class="card-info">
               <div class="card-account-label">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 6.5h13M1.5 6.5v7h13v-7M4 6.5V11M6.5 6.5V11M9.5 6.5V11M12 6.5V11M8 2L1.5 6.5h13L8 2Z" stroke="#dddddd" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <img src="https://www.figma.com/api/mcp/asset/fb777daa-7b74-44b7-bd01-86ed428bbe63" alt="" style="width:16px;height:16px;flex-shrink:0"/>
                 <span class="card-account-label-text">&#x2022;&#x2022;4321</span>
               </div>
               <div class="card-balance">$1,890.27</div>
             </div>
             <div class="card-actions">
-              <button class="btn-sm"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5.5h12M11 2.5l3 3-3 3M14 10.5H2M5 7.5l-3 3 3 3" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-              <button class="btn-sm btn-sm--icon-only"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="3.5" cy="8" r="1.5" fill="#001b96"/><circle cx="8" cy="8" r="1.5" fill="#001b96"/><circle cx="12.5" cy="8" r="1.5" fill="#001b96"/></svg></button>
+              <button class="btn-sm" onclick="navigateTo('transfer-money')"><img src="https://www.figma.com/api/mcp/asset/3ea2f8a8-5ce9-46f9-b664-5345baa73445" alt="" style="width:16px;height:16px"/></button>
+              <button class="btn-sm btn-sm--icon-only">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0">
+                  <circle cx="3" cy="8" r="1.5" fill="#001b96"/>
+                  <circle cx="8" cy="8" r="1.5" fill="#001b96"/>
+                  <circle cx="13" cy="8" r="1.5" fill="#001b96"/>
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -1674,15 +2634,23 @@
               <div class="hyperlink" onclick="navigateTo('transactions')" style="cursor:pointer"><span class="hyperlink-text">See all</span></div>
             </div>
             <div class="transaction-list">
-              <div class="transaction-item"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/20c8f2fe-3a3a-4e83-89e5-28e28d0345d8" alt=""/></div><div class="tx-description"><span class="tx-name">Miscellaneous</span><span class="tx-meta">Mar 26 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$32.93</span></div>
-              <div class="transaction-item"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/20c8f2fe-3a3a-4e83-89e5-28e28d0345d8" alt=""/></div><div class="tx-description"><span class="tx-name">Payout</span><span class="tx-meta">Mar 25 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$24.33</span></div>
-              <div class="transaction-item"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/20c8f2fe-3a3a-4e83-89e5-28e28d0345d8" alt=""/></div><div class="tx-description"><span class="tx-name">Payout</span><span class="tx-meta">Mar 25 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$17.29</span></div>
-              <div class="transaction-item"><div class="tx-label"><div class="tx-icon tx-icon--light"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M1 1.5h2.5l1.5 8.5h7L14 4.5H4" stroke="#001b96" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="13.5" r="1" fill="#001b96"/><circle cx="11.5" cy="13.5" r="1" fill="#001b96"/></svg></div><div class="tx-description"><span class="tx-name">Walmart</span><span class="tx-meta">Mar 26 · Purchase</span></div></div><span class="tx-amount tx-amount--negative">-$37.75</span></div>
+              <div class="transaction-item" style="cursor:pointer" onclick="openTxDetail({name:'Miscellaneous',amount:'$32.93',sign:'+',date:'Mar 26, 2025, 9:14 AM',type:'Payout',category:'Income',icon:'payout'})"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/38e1f019-33ef-459d-8c96-d8a34a787060" alt=""/></div><div class="tx-description"><span class="tx-name">Miscellaneous</span><span class="tx-meta">Mar 26 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$32.93</span></div>
+              <div class="transaction-item" style="cursor:pointer" onclick="openTxDetail({name:'Payout',amount:'$24.33',sign:'+',date:'Mar 25, 2025, 2:37 PM',type:'Payout',category:'Income',icon:'payout'})"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/38e1f019-33ef-459d-8c96-d8a34a787060" alt=""/></div><div class="tx-description"><span class="tx-name">Payout</span><span class="tx-meta">Mar 25 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$24.33</span></div>
+              <div class="transaction-item" style="cursor:pointer" onclick="openTxDetail({name:'Payout',amount:'$17.29',sign:'+',date:'Mar 25, 2025, 11:52 AM',type:'Payout',category:'Income',icon:'payout'})"><div class="tx-label"><div class="tx-icon tx-icon--brand"><img src="https://www.figma.com/api/mcp/asset/38e1f019-33ef-459d-8c96-d8a34a787060" alt=""/></div><div class="tx-description"><span class="tx-name">Payout</span><span class="tx-meta">Mar 25 · Payout</span></div></div><span class="tx-amount tx-amount--positive">+$17.29</span></div>
+              <div class="transaction-item" style="cursor:pointer" onclick="openTxDetail({name:'Walmart',amount:'$37.75',sign:'−',date:'Mar 26, 2025, 5:15 PM',type:'Purchase',category:'Groceries',icon:'purchase'})"><div class="tx-label"><div class="tx-icon tx-icon--light" style="background:#e8e8e8;border-radius:50%;display:flex;align-items:center;justify-content:center"><img src="https://www.figma.com/api/mcp/asset/82197d86-6272-4c03-a1b3-472dcdd13a3b" alt="" style="width:16px;height:16px"/></div><div class="tx-description"><span class="tx-name">Walmart</span><span class="tx-meta">Mar 26 · Purchase</span></div></div><span class="tx-amount tx-amount--negative">-$37.75</span></div>
             </div>
           </div>
 
           <div class="banners-row">
-            <div class="banner-card"><div class="banner-content"><span class="banner-title">Cashback</span><span class="banner-desc">You're already earning 6% back on fuel and 4% on EV. Keep it going!</span></div><div class="banner-badge banner-badge--money"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="10" stroke="white" stroke-width="2"/><path d="M16 10v12" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M13 13.5C13 12.12 14.34 11 16 11s3 1.12 3 2.5S17.66 16 16 16s-3 1.12-3 2.5S14.34 21 16 21s3-1.12 3-2.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+            <div class="banner-card" style="background:#fdf2dc;border:none;display:flex;align-items:center;gap:16px;padding:16px;border-radius:12px;flex:1">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                <span style="font-family:var(--font-body-md-family);font-weight:600;font-size:16px;line-height:20px;color:var(--color-text-primary)">Cashback</span>
+                <span style="font-family:var(--font-body-md-family);font-weight:400;font-size:12px;line-height:16px;color:#5e5e5e">Use your card and unlock up to 3% back on fuel and up to 6% on EV charging.</span>
+              </div>
+              <div style="width:54px;height:54px;flex-shrink:0;position:relative;overflow:hidden">
+                <img src="https://www.figma.com/api/mcp/asset/911dbc3f-1f75-4b67-9b05-cd84ffb70138" alt="" style="position:absolute;width:112%;height:112%;top:-6%;left:-6%;max-width:none"/>
+              </div>
+            </div>
             <div class="banner-card"><div class="banner-content"><span class="banner-title">Holiday pay</span><span class="banner-desc">Earn even when you're not behind the wheel.</span></div><div class="banner-badge banner-badge--vacation"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M8 25C8 25 11 18 17 16C23 14 27 8 27 8" stroke="white" stroke-width="2.2" stroke-linecap="round"/><circle cx="27" cy="8" r="3.5" fill="white"/></svg></div></div>
           </div>
         </div>
@@ -1718,7 +2686,7 @@
         </div>
 
       </div
-      </div><!-- /account-panels-track -->>
+      </div><!-- /account-panels-track -->
     </div>
 
 
@@ -1735,9 +2703,7 @@
   <div class="tx-page-topbar">
     <div class="tx-page-nav">
       <button class="tx-back-btn" onclick="navigateTo('home')" aria-label="Back">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M15 19l-7-7 7-7" stroke="#353535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="https://www.figma.com/api/mcp/asset/8a412880-eaea-47c4-965b-b585cfae285f" alt="" style="width:24px;height:24px"/>
       </button>
       <div class="tx-page-title">Checking <span style="font-family:sans-serif;letter-spacing:-1px">••</span>4321</div>
     </div>
@@ -1758,14 +2724,10 @@
       <div class="tx-group-label">Pending transactions</div>
       <div class="tx-group-card">
 
-        <div class="tx-item" data-type="out">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'AMAZON 68570',amount:'$22.56',sign:'−',date:'Mar 25, 2025, 8:03 PM',type:'Purchase',category:'Shopping',icon:'purchase'})" data-type="out">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                <path d="M1 1.5h2.5l1.6 8.5h8l1.5-6H4.8" stroke="#001b96" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7.5" cy="14.5" r="1.2" fill="#001b96"/>
-                <circle cx="12" cy="14.5" r="1.2" fill="#001b96"/>
-              </svg>
+              <img src="https://www.figma.com/api/mcp/asset/39c55428-e761-416a-bce4-7a485a537eef" alt="" style="width:16px;height:16px"/>
             </div>
             <div class="tx-details">
               <div class="tx-name">AMAZON 68570</div>
@@ -1775,7 +2737,7 @@
           <div class="tx-amount tx-amount--pending">-$22.56</div>
         </div>
 
-        <div class="tx-item" data-type="out">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Money sent',amount:'$20.00',sign:'−',date:'Mar 25, 2025, 3:44 PM',type:'Transfer',category:'Transfer',icon:'transfer'})" data-type="out">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
               <!-- Arrow up / transfer icon -->
@@ -1799,7 +2761,7 @@
       <div class="tx-group-label">March 2025</div>
       <div class="tx-group-card">
 
-        <div class="tx-item" data-type="in">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Miscellaneous',amount:'$32.93',sign:'+',date:'Mar 26, 2025, 7:29 AM',type:'Payout',category:'Income',icon:'payout'})" data-type="in">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
               <img src="https://www.figma.com/api/mcp/asset/4919b2d0-6320-4f38-9064-06e400e0186a" alt="Uber"/>
@@ -1812,7 +2774,7 @@
           <div class="tx-amount tx-amount--positive">+$32.93</div>
         </div>
 
-        <div class="tx-item" data-type="in">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Payout',amount:'$24.33',sign:'+',date:'Mar 26, 2025, 12:01 PM',type:'Payout',category:'Income',icon:'payout'})" data-type="in">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
               <img src="https://www.figma.com/api/mcp/asset/4919b2d0-6320-4f38-9064-06e400e0186a" alt="Uber"/>
@@ -1825,14 +2787,10 @@
           <div class="tx-amount tx-amount--positive">+$24.33</div>
         </div>
 
-        <div class="tx-item" data-type="out">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Walmart',amount:'$37.75',sign:'−',date:'Mar 26, 2025, 6:58 PM',type:'Purchase',category:'Groceries',icon:'purchase'})" data-type="out">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                <path d="M1 1.5h2.5l1.6 8.5h8l1.5-6H4.8" stroke="#001b96" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7.5" cy="14.5" r="1.2" fill="#001b96"/>
-                <circle cx="12" cy="14.5" r="1.2" fill="#001b96"/>
-              </svg>
+              <img src="https://www.figma.com/api/mcp/asset/39c55428-e761-416a-bce4-7a485a537eef" alt="" style="width:16px;height:16px"/>
             </div>
             <div class="tx-details">
               <div class="tx-name">Walmart</div>
@@ -1842,7 +2800,7 @@
           <div class="tx-amount tx-amount--negative">-$37.75</div>
         </div>
 
-        <div class="tx-item" data-type="in">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Payout',amount:'$12.93',sign:'+',date:'Mar 26, 2025, 10:22 AM',type:'Payout',category:'Income',icon:'payout'})" data-type="in">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
               <img src="https://www.figma.com/api/mcp/asset/4919b2d0-6320-4f38-9064-06e400e0186a" alt="Uber"/>
@@ -1855,7 +2813,7 @@
           <div class="tx-amount tx-amount--positive">+$12.93</div>
         </div>
 
-        <div class="tx-item" data-type="in">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Tip',amount:'$0.35',sign:'+',date:'Mar 25, 2025, 4:17 PM',type:'Payout',category:'Income',icon:'payout'})" data-type="in">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
               <img src="https://www.figma.com/api/mcp/asset/4919b2d0-6320-4f38-9064-06e400e0186a" alt="Uber"/>
@@ -1868,14 +2826,10 @@
           <div class="tx-amount tx-amount--positive">+$0.35</div>
         </div>
 
-        <div class="tx-item" data-type="out">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Transaction description',amount:'$20.00',sign:'−',date:'Jan 3, 2025, 1:33 PM',type:'Transfer',category:'Transfer',icon:'transfer'})" data-type="out">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                <path d="M1 1.5h2.5l1.6 8.5h8l1.5-6H4.8" stroke="#001b96" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7.5" cy="14.5" r="1.2" fill="#001b96"/>
-                <circle cx="12" cy="14.5" r="1.2" fill="#001b96"/>
-              </svg>
+              <img src="https://www.figma.com/api/mcp/asset/39c55428-e761-416a-bce4-7a485a537eef" alt="" style="width:16px;height:16px"/>
             </div>
             <div class="tx-details">
               <div class="tx-name">Costco</div>
@@ -1893,45 +2847,10 @@
       <div class="tx-group-label">January 2025</div>
       <div class="tx-group-card">
 
-        <div class="tx-item" data-type="out">
+        <div class="tx-item" style="cursor:pointer" onclick="openTxDetail({name:'Nike',amount:'$80.39',sign:'−',date:'Jan 5, 2025, 3:08 PM',type:'Purchase',category:'Shopping',icon:'purchase'})" data-type="out">
           <div class="tx-label">
             <div class="tx-icon tx-icon--brand">
-              <!-- Uber U icon placeholder -->
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <text x="2" y="13" font-family="Figtree,sans-serif" font-weight="700" font-size="13" fill="#001b96">U</text>
-              </svg>
-            </div>
-            <div class="tx-details">
-              <div class="tx-name">Transaction description</div>
-              <div class="tx-meta">3 Feb · Pending · Transfer</div>
-            </div>
-          </div>
-          <div class="tx-amount tx-amount--pending">-$20.00</div>
-        </div>
-
-        <div class="tx-item" data-type="out">
-          <div class="tx-label">
-            <div class="tx-icon tx-icon--brand">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <text x="2" y="13" font-family="Figtree,sans-serif" font-weight="700" font-size="13" fill="#001b96">U</text>
-              </svg>
-            </div>
-            <div class="tx-details">
-              <div class="tx-name">Card services</div>
-              <div class="tx-meta">6 Jan · Fee</div>
-            </div>
-          </div>
-          <div class="tx-amount tx-amount--negative">-$2.22</div>
-        </div>
-
-        <div class="tx-item" data-type="out">
-          <div class="tx-label">
-            <div class="tx-icon tx-icon--brand">
-              <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
-                <path d="M1 1.5h2.5l1.6 8.5h8l1.5-6H4.8" stroke="#001b96" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7.5" cy="14.5" r="1.2" fill="#001b96"/>
-                <circle cx="12" cy="14.5" r="1.2" fill="#001b96"/>
-              </svg>
+              <img src="https://www.figma.com/api/mcp/asset/39c55428-e761-416a-bce4-7a485a537eef" alt="" style="width:16px;height:16px"/>
             </div>
             <div class="tx-details">
               <div class="tx-name">Nike</div>
@@ -1965,22 +2884,22 @@
     <div class="pay-tiles">
 
       <div class="pay-tile" onclick="navigateTo('transfer-money')">
-        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
-          <img src="https://www.figma.com/api/mcp/asset/be200365-d79d-4278-be21-27459735f435" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        <div style="width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.8717 17.573L16.8717 20.573C16.6603 20.7843 16.3737 20.9031 16.0748 20.9031C15.7759 20.9031 15.4893 20.7843 15.2779 20.573C15.0666 20.3617 14.9478 20.075 14.9478 19.7761C14.9478 19.4772 15.0666 19.1906 15.2779 18.9792L16.357 17.9021H4.07572C3.77735 17.9021 3.4912 17.7835 3.28023 17.5726C3.06925 17.3616 2.95072 17.0754 2.95072 16.7771C2.95072 16.4787 3.06925 16.1925 3.28023 15.9816C3.4912 15.7706 3.77735 15.6521 4.07572 15.6521H16.357L15.277 14.573C15.0656 14.3617 14.9469 14.075 14.9469 13.7761C14.9469 13.4772 15.0656 13.1906 15.277 12.9792C15.4883 12.7679 15.775 12.6492 16.0738 12.6492C16.3727 12.6492 16.6594 12.7679 16.8707 12.9792L19.8707 15.9792C19.9757 16.0837 20.059 16.2078 20.1158 16.3446C20.1727 16.4813 20.202 16.6279 20.2021 16.7759C20.2022 16.924 20.173 17.0706 20.1163 17.2074C20.0596 17.3442 19.9765 17.4684 19.8717 17.573ZM6.27791 11.573C6.48925 11.7843 6.7759 11.9031 7.07478 11.9031C7.37367 11.9031 7.66031 11.7843 7.87166 11.573C8.083 11.3617 8.20174 11.075 8.20174 10.7761C8.20174 10.4772 8.083 10.1906 7.87166 9.97925L6.79447 8.90206H19.0757C19.3741 8.90206 19.6602 8.78353 19.8712 8.57255C20.0822 8.36158 20.2007 8.07543 20.2007 7.77706C20.2007 7.47869 20.0822 7.19254 19.8712 6.98156C19.6602 6.77059 19.3741 6.65206 19.0757 6.65206H6.79447L7.87166 5.573C8.083 5.36165 8.20174 5.07501 8.20174 4.77612C8.20174 4.47724 8.083 4.19059 7.87166 3.97925C7.66031 3.7679 7.37367 3.64917 7.07478 3.64917C6.7759 3.64917 6.48925 3.7679 6.27791 3.97925L3.27791 6.97925C3.17303 7.08376 3.08981 7.20796 3.03303 7.3447C2.97625 7.48145 2.94702 7.62806 2.94702 7.77612C2.94702 7.92419 2.97625 8.0708 3.03303 8.20754C3.08981 8.34429 3.17303 8.46848 3.27791 8.573L6.27791 11.573Z" fill="#353535"/></svg>
         </div>
         <span class="pay-tile-label">Transfer money</span>
       </div>
 
       <div class="pay-tile" onclick="navigateTo('transfer-savings')">
-        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
-          <img src="https://www.figma.com/api/mcp/asset/fecaa7db-3f31-4d29-bfa9-c44c7c56152e" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        <div style="width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.75 12C15.75 12.7417 15.5301 13.4667 15.118 14.0834C14.706 14.7001 14.1203 15.1807 13.4351 15.4645C12.7498 15.7484 11.9958 15.8226 11.2684 15.6779C10.541 15.5333 9.8728 15.1761 9.34835 14.6517C8.8239 14.1272 8.46675 13.459 8.32205 12.7316C8.17736 12.0042 8.25162 11.2502 8.53545 10.5649C8.81928 9.87971 9.29993 9.29404 9.91661 8.88199C10.5333 8.46993 11.2583 8.25 12 8.25C12.9946 8.25 13.9484 8.64509 14.6517 9.34835C15.3549 10.0516 15.75 11.0054 15.75 12ZM23.25 6V18C23.25 18.1989 23.171 18.3897 23.0303 18.5303C22.8897 18.671 22.6989 18.75 22.5 18.75H1.5C1.30109 18.75 1.11032 18.671 0.96967 18.5303C0.829018 18.3897 0.75 18.1989 0.75 18V6C0.75 5.80109 0.829018 5.61032 0.96967 5.46967C1.11032 5.32902 1.30109 5.25 1.5 5.25H22.5C22.6989 5.25 22.8897 5.32902 23.0303 5.46967C23.171 5.61032 23.25 5.80109 23.25 6ZM21.75 10.3453C20.8984 10.0935 20.1233 9.63263 19.4953 9.00467C18.8674 8.37671 18.4065 7.60162 18.1547 6.75H5.84531C5.5935 7.60162 5.13263 8.37671 4.50467 9.00467C3.87671 9.63263 3.10162 10.0935 2.25 10.3453V13.6547C3.10162 13.9065 3.87671 14.3674 4.50467 14.9953C5.13263 15.6233 5.5935 16.3984 5.84531 17.25H18.1547C18.4065 16.3984 18.8674 15.6233 19.4953 14.9953C20.1233 14.3674 20.8984 13.9065 21.75 13.6547V10.3453Z" fill="#353535"/></svg>
         </div>
         <span class="pay-tile-label">Transfer to savings</span>
       </div>
 
       <div class="pay-tile" onclick="navigateTo('receive-money')">
-        <div style="width:24px;height:24px;position:relative;flex-shrink:0">
-          <img src="https://www.figma.com/api/mcp/asset/d077d14c-32c3-4fa2-9f2d-3cd4859e0054" alt="" style="position:absolute;width:100%;height:100%;object-fit:contain"/>
+        <div style="width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5459 14.2959L12.7959 21.0459C12.6914 21.1508 12.5672 21.234 12.4304 21.2908C12.2937 21.3476 12.1471 21.3768 11.999 21.3768C11.851 21.3768 11.7043 21.3476 11.5676 21.2908C11.4309 21.234 11.3067 21.1508 11.2021 21.0459L4.45215 14.2959C4.2408 14.0846 4.12207 13.7979 4.12207 13.4991C4.12207 13.2002 4.2408 12.9135 4.45215 12.7022C4.66349 12.4908 4.95014 12.3721 5.24902 12.3721C5.54791 12.3721 5.83455 12.4908 6.0459 12.7022L10.875 17.5312V3.75C10.875 3.45163 10.9935 3.16548 11.2045 2.9545C11.4154 2.74353 11.7016 2.625 12 2.625C12.2983 2.625 12.5845 2.74353 12.7955 2.9545C13.0064 3.16548 13.125 3.45163 13.125 3.75V17.5312L17.954 12.7012C18.1654 12.4899 18.452 12.3712 18.7509 12.3712C19.0498 12.3712 19.3364 12.4899 19.5478 12.7012C19.7591 12.9126 19.8778 13.1992 19.8778 13.4981C19.8778 13.797 19.7591 14.0837 19.5478 14.295L19.5459 14.2959Z" fill="#353535"/></svg>
         </div>
         <span class="pay-tile-label">Receive money</span>
       </div>
@@ -1993,10 +2912,7 @@
     <!-- Your payees row -->
     <div class="pay-list-row" onclick="navigateTo('payees')">
       <div class="pay-list-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="8" r="4" stroke="#001b96" stroke-width="1.7"/>
-          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#001b96" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.6497 20.625C21.5838 20.739 21.4891 20.8337 21.3751 20.8995C21.261 20.9654 21.1316 21 21 21H2.99996C2.86838 20.9999 2.73914 20.9651 2.62523 20.8992C2.51133 20.8333 2.41676 20.7386 2.35102 20.6247C2.28529 20.5107 2.2507 20.3814 2.25073 20.2498C2.25077 20.1182 2.28542 19.9889 2.35121 19.875C3.77903 17.4065 5.97934 15.6365 8.54715 14.7975C7.277 14.0414 6.29016 12.8892 5.7382 11.5179C5.18624 10.1467 5.09967 8.63211 5.49178 7.20688C5.8839 5.78165 6.73301 4.52454 7.90874 3.6286C9.08446 2.73266 10.5218 2.24744 12 2.24744C13.4781 2.24744 14.9155 2.73266 16.0912 3.6286C17.2669 4.52454 18.116 5.78165 18.5081 7.20688C18.9003 8.63211 18.8137 10.1467 18.2617 11.5179C17.7098 12.8892 16.7229 14.0414 15.4528 14.7975C18.0206 15.6365 20.2209 17.4065 21.6487 19.875C21.7147 19.9889 21.7495 20.1182 21.7497 20.2499C21.7498 20.3815 21.7153 20.5109 21.6497 20.625Z" fill="#001b96"/></svg>
       </div>
       <div class="pay-list-text">
         <span class="pay-list-title">Your payees</span>
@@ -2013,6 +2929,338 @@
 </div><!-- /page-payment -->
 
 
+<!-- ── CARD TAB PAGE ──────────────────────────────────────── -->
+<div class="page tab-page" id="page-card" style="background:var(--color-primary-50)">
+  <!-- Top bar -->
+  <div class="top-bar" style="background:var(--color-primary-50)">
+    <div class="card-header">
+      <span class="card-header-title">Card</span>
+      <div class="avatar">AB</div>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="card-scroll">
+
+    <!-- Card visual + actions -->
+    <div class="card-section">
+
+      <!-- Card flip scene -->
+      <div class="card-flip-scene">
+        <div class="card-flip-inner" id="card-flip-inner">
+
+          <!-- FRONT -->
+          <div class="card-face card-face-front">
+            <img src="https://www.figma.com/api/mcp/asset/04f1201e-4439-4ee3-928c-1ff40d6d07e9" alt="" style="position:absolute;width:248%;height:221%;top:-11%;left:-15%;pointer-events:none;opacity:0.85"/>
+            <div class="card-visual-logo">
+              <div style="width:26.667px;height:28.123px;position:relative;flex-shrink:0">
+                <img src="https://www.figma.com/api/mcp/asset/d7f88a83-60d4-4d01-aa0f-f09bc438e632" alt="" style="position:absolute;width:100%;height:100%;display:block"/>
+              </div>
+              <span class="card-visual-logo-text">rbit</span>
+            </div>
+          </div>
+
+          <!-- BACK -->
+          <div class="card-face card-face-back">
+            <div class="card-back-overlay"></div>
+            <div class="card-back-details">
+              <div class="card-back-field">
+                <span class="card-back-name">Amir Bukhari</span>
+                <div class="card-back-number-row">
+                  <span class="card-back-number">8394 2748 0984 1873</span>
+                  <span class="card-copy-btn" onclick="navigator.clipboard?.writeText('8394274809841873')">
+                    <img src="https://www.figma.com/api/mcp/asset/4b3608ee-4c47-4af9-bcf0-7a604c1e1eab" alt="copy" style="width:20px;height:20px"/>
+                  </span>
+                </div>
+              </div>
+              <div class="card-back-exp-cvc">
+                <div class="card-back-field">
+                  <span class="card-back-field-label">EXP</span>
+                  <div class="card-back-field-value-row">
+                    <span class="card-back-field-value">12/28</span>
+                    <span class="card-copy-btn" onclick="navigator.clipboard?.writeText('12/28')">
+                      <img src="https://www.figma.com/api/mcp/asset/4b3608ee-4c47-4af9-bcf0-7a604c1e1eab" alt="copy" style="width:20px;height:20px"/>
+                    </span>
+                  </div>
+                </div>
+                <div class="card-back-field">
+                  <span class="card-back-field-label">CVC</span>
+                  <div class="card-back-field-value-row">
+                    <span class="card-back-field-value">893</span>
+                    <span class="card-copy-btn" onclick="navigator.clipboard?.writeText('893')">
+                      <img src="https://www.figma.com/api/mcp/asset/4b3608ee-4c47-4af9-bcf0-7a604c1e1eab" alt="copy" style="width:20px;height:20px"/>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /card-flip-inner -->
+      </div><!-- /card-flip-scene -->
+
+      <!-- Quick actions -->
+      <div class="card-actions">
+        <button class="card-action-btn" id="card-details-btn" onclick="toggleCardDetails()">
+          <div class="card-action-icon" id="card-details-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.54688C15.2573 4.54688 18.216 5.78534 20.5596 8.12891C22.317 9.88636 23.1091 11.6394 23.1426 11.7148C23.1826 11.8048 23.2031 11.9026 23.2031 12.001C23.2031 12.0992 23.1824 12.1963 23.1426 12.2861V12.2871C23.1087 12.3635 22.3165 14.1151 20.5596 15.8721C18.216 18.2147 15.2573 19.4531 12 19.4531C8.74268 19.4531 5.784 18.2147 3.44043 15.8721C1.68352 14.1152 0.891332 12.3635 0.857422 12.2871V12.2861C0.817567 12.1963 0.796881 12.0992 0.796875 12.001C0.796875 11.9026 0.817443 11.8048 0.857422 11.7148L0.858398 11.7139C0.887047 11.644 1.6821 9.88724 3.44043 8.12891C5.784 5.78534 8.74267 4.54688 12 4.54688ZM13.4531 8.49219C12.7593 8.20481 11.9953 8.12986 11.2588 8.27637C10.5225 8.42293 9.84631 8.78455 9.31543 9.31543C8.78455 9.84631 8.42294 10.5225 8.27637 11.2588C8.12986 11.9953 8.20481 12.7593 8.49219 13.4531C8.77957 14.1469 9.26627 14.74 9.89062 15.1572C10.515 15.5744 11.2491 15.7969 12 15.7969C13.007 15.7969 13.9725 15.3966 14.6846 14.6846C15.3966 13.9725 15.7969 13.007 15.7969 12C15.7969 11.2491 15.5744 10.515 15.1572 9.89062C14.74 9.26627 14.1469 8.77957 13.4531 8.49219Z" fill="white"/></svg>
+          </div>
+          <span class="card-action-label" id="card-details-label">Show details</span>
+        </button>
+        <button class="card-action-btn" onclick="alert('Lock card — coming soon')">
+          <div class="card-action-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 8.5H16.5V6.25C16.5 5.05653 16.0259 3.91193 15.182 3.06802C14.3381 2.22411 13.1935 1.75 12 1.75C10.8065 1.75 9.66193 2.22411 8.81802 3.06802C7.97411 3.91193 7.5 5.05653 7.5 6.25V8.5H4.5C4.10218 8.5 3.72064 8.65804 3.43934 8.93934C3.15804 9.22064 3 9.60218 3 10V20.5C3 20.8978 3.15804 21.2794 3.43934 21.5607C3.72064 21.842 4.10218 22 4.5 22H19.5C19.8978 22 20.2794 21.842 20.5607 21.5607C20.842 21.2794 21 20.8978 21 20.5V10C21 9.60218 20.842 9.22064 20.5607 8.93934C20.2794 8.65804 19.8978 8.5 19.5 8.5ZM12 16.375C11.7775 16.375 11.56 16.309 11.375 16.1854C11.19 16.0618 11.0458 15.8861 10.9606 15.6805C10.8755 15.475 10.8532 15.2488 10.8966 15.0305C10.94 14.8123 11.0472 14.6118 11.2045 14.4545C11.3618 14.2972 11.5623 14.19 11.7805 14.1466C11.9988 14.1032 12.225 14.1255 12.4305 14.2106C12.6361 14.2958 12.8118 14.44 12.9354 14.625C13.059 14.81 13.125 15.0275 13.125 15.25C13.125 15.5484 13.0065 15.8345 12.7955 16.0455C12.5845 16.2565 12.2984 16.375 12 16.375ZM15 8.5H9V6.25C9 5.45435 9.31607 4.69129 9.87868 4.12868C10.4413 3.56607 11.2044 3.25 12 3.25C12.7956 3.25 13.5587 3.56607 14.1213 4.12868C14.6839 4.69129 15 5.45435 15 6.25V8.5Z" fill="white"/></svg>
+          </div>
+          <span class="card-action-label">Lock card</span>
+        </button>
+      </div>
+
+      <!-- Apple Wallet -->
+      <button class="card-wallet-btn" onclick="alert('Add to Apple Wallet — coming soon')">
+        <img src="https://www.figma.com/api/mcp/asset/3459127d-9ff4-471b-8a34-d93dd96344c1" alt="" style="width:39px;height:39px;object-fit:contain"/>
+        Add to Apple Wallet
+      </button>
+
+    </div><!-- /card-section -->
+
+    <!-- Card tools -->
+    <div class="card-tools">
+      <span class="card-tools-heading">Card tools</span>
+      <div>
+        <div class="card-tool-item" onclick="alert('View PIN — coming soon')">
+          <div class="card-tool-item-icon">
+            <img src="https://www.figma.com/api/mcp/asset/46468855-d661-42e0-a65f-49c22a080be5" alt="" style="width:24px;height:24px"/>
+          </div>
+          <div class="card-tool-item-body">
+            <span class="card-tool-item-label">View PIN</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-tool-item" onclick="alert('Replace card — coming soon')">
+          <div class="card-tool-item-icon">
+            <img src="https://www.figma.com/api/mcp/asset/41026de2-d9b1-4c06-aa53-9b6bca65bbc8" alt="" style="width:24px;height:24px"/>
+          </div>
+          <div class="card-tool-item-body">
+            <span class="card-tool-item-label">Replace card</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="card-tool-item" onclick="alert('Find ATM — coming soon')">
+          <div class="card-tool-item-icon">
+            <img src="https://www.figma.com/api/mcp/asset/db36ba06-ce3d-475b-bbf4-6db6c618dae0" alt="" style="width:24px;height:24px"/>
+          </div>
+          <div class="card-tool-item-body">
+            <span class="card-tool-item-label">Find ATM</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18l6-6-6-6" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </div><!-- /card-tools -->
+
+    <!-- Issuing statement -->
+    <p class="card-issuing">
+      This Orbit Card is issued pursuant to licence by<br>
+      Mastercard International.Inc. For customer service, call X-XXX-XXXX.
+    </p>
+
+  </div><!-- /card-scroll -->
+</div><!-- /page-card -->
+
+<!-- ── PERKS TAB PAGE ────────────────────────────────────────── -->
+<div class="page tab-page" id="page-perks" style="background:#fff">
+  <!-- Top bar -->
+  <div class="pay-topbar" style="background:#fff">
+    <div class="perks-header-row" style="padding:0 var(--space-app-margin)">
+      <span class="perks-header-title">Perks</span>
+      <div class="avatar">AB</div>
+    </div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="perks-scroll">
+
+    <!-- Hero -->
+    <div class="perks-hero">
+      <div>
+        <p class="perks-headline">Earn cashback automatically</p>
+        <p class="perks-subline">Get more out of your everyday spending with premium cashback. Simply use your card and earn!</p>
+      </div>
+
+      <!-- Cashback balance banner -->
+      <div class="perks-balance-banner">
+        <div class="perks-balance-text">
+          <span class="perks-balance-earned">You earned $8.34 in April</span>
+          <div class="perks-balance-link" onclick="alert('Cashback summary — coming soon')">
+            <span class="perks-balance-link-label">View cashback summary</span>
+            <img src="https://www.figma.com/api/mcp/asset/aacefb8b-6962-4868-b5c1-ca3c277fdd06" alt="" style="width:16px;height:16px"/>
+          </div>
+        </div>
+        <img src="https://www.figma.com/api/mcp/asset/93fecc96-8f52-48a2-88ca-9d2542ceefbd" alt="" class="perks-balance-img"/>
+      </div>
+    </div>
+
+    <!-- Offer cards -->
+    <div class="perks-offers">
+
+      <!-- Shell offer -->
+      <div class="perks-offer-card perks-offer-card--shell" onclick="navigateTo('shell-offer')">
+        <div class="perks-offer-content">
+          <div class="perks-offer-details">
+            <div class="perks-offer-logo">
+              <img src="https://www.figma.com/api/mcp/asset/b10b9b49-3e8f-414a-a6d4-6433a527ef97" alt="Shell"/>
+            </div>
+            <span class="perks-offer-title">2% cashback<br>at Shell</span>
+          </div>
+          <div class="perks-offer-cta">
+            <span class="perks-offer-cta-label">View details</span>
+            <img src="https://www.figma.com/api/mcp/asset/aacefb8b-6962-4868-b5c1-ca3c277fdd06" alt="" style="width:16px;height:16px"/>
+          </div>
+        </div>
+        <img src="https://www.figma.com/api/mcp/asset/2c5e0038-e665-4292-831c-d1e1f79dd36c" alt="" class="perks-offer-image"/>
+      </div>
+
+      <!-- EVgo offer -->
+      <div class="perks-offer-card perks-offer-card--evgo" onclick="alert('EVgo offer — coming soon')">
+        <div class="perks-offer-content">
+          <div class="perks-offer-details">
+            <div class="perks-offer-logo">
+              <img src="https://www.figma.com/api/mcp/asset/28d55a96-6344-4e30-80ba-8044b464baf0" alt="EVgo"/>
+            </div>
+            <span class="perks-offer-title">2% cashback at EVgo</span>
+          </div>
+          <div class="perks-offer-cta">
+            <span class="perks-offer-cta-label">View details</span>
+            <img src="https://www.figma.com/api/mcp/asset/aacefb8b-6962-4868-b5c1-ca3c277fdd06" alt="" style="width:16px;height:16px"/>
+          </div>
+        </div>
+        <img src="https://www.figma.com/api/mcp/asset/cd949fae-420a-412b-b16d-521b0e559a3c" alt="" class="perks-offer-image"/>
+      </div>
+
+    </div><!-- /perks-offers -->
+
+  </div><!-- /perks-scroll -->
+</div><!-- /page-perks -->
+
+
+<!-- ── TRANSACTION DETAIL PAGE ────────────────────────────── -->
+<div class="tx-detail-page" id="page-tx-detail">
+
+  <!-- Header (navy hero) -->
+  <div class="tx-detail-header" id="tx-detail-header">
+    <div class="tx-detail-nav">
+      <button class="tx-detail-back" onclick="closeTxDetail()" aria-label="Back">
+        <img src="https://www.figma.com/api/mcp/asset/1246fd51-3fbb-487e-88a2-ce1dbab22bd6" alt="" style="width:24px;height:24px"/>
+      </button>
+      <span class="tx-detail-nav-title">Transaction details</span>
+    </div>
+    <div class="tx-detail-hero">
+      <div class="tx-detail-amount" id="tx-detail-amount">
+        <span class="tx-detail-amount-sign" id="tx-detail-sign">−</span>
+        <span class="tx-detail-amount-value" id="tx-detail-value">$0.00</span>
+      </div>
+    </div>
+  </div><!-- /tx-detail-header -->
+  <!-- Icon straddles header/body boundary -->
+  <div style="display:flex;justify-content:center;position:relative;z-index:2;margin-top:-30px;margin-bottom:0">
+    <div class="tx-detail-icon" id="tx-detail-icon">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="tx-detail-body">
+    <div class="tx-detail-merchant">
+      <span class="tx-detail-merchant-name" id="tx-detail-name">Walmart</span>
+      <span class="tx-detail-category-pill" id="tx-detail-category">Purchase</span>
+    </div>
+
+    <div class="tx-detail-fields">
+      <div class="tx-detail-field">
+        <span class="tx-detail-field-label">Date</span>
+        <span class="tx-detail-field-value" id="tx-detail-date">—</span>
+      </div>
+      <div class="tx-detail-field">
+        <span class="tx-detail-field-label">Source</span>
+        <span class="tx-detail-field-value">Checking ••4321</span>
+      </div>
+      <div class="tx-detail-field">
+        <span class="tx-detail-field-label">Type</span>
+        <span class="tx-detail-field-value" id="tx-detail-type">—</span>
+      </div>
+    </div>
+
+    <button class="tx-detail-dispute-btn" onclick="alert('Dispute a transaction — coming soon')">
+      Dispute a transaction
+    </button>
+  </div>
+
+</div><!-- /page-tx-detail -->
+
+
+<!-- ── SHELL OFFER DETAIL PAGE ──────────────────────────────── -->
+<div class="placeholder-page" id="page-shell-offer">
+
+  <!-- Top bar: cream background -->
+  <div style="background:#fffae0;flex-shrink:0">
+    <div class="placeholder-nav" style="background:#fffae0">
+      <button class="placeholder-back" onclick="navigateBack('shell-offer')" aria-label="Close"
+              style="background:none;border:none;outline:none;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:center;width:24px;height:24px">
+        <img src="https://www.figma.com/api/mcp/asset/69a599b0-29eb-4a16-a053-26974e53fe6d" alt="" style="width:24px;height:24px"/>
+      </button>
+    </div>
+
+    <!-- Title section -->
+    <div style="display:flex;align-items:center;gap:32px;padding:16px var(--space-app-margin) 20px;background:#fffae0">
+      <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+        <span style="font-family:var(--font-body-md-family);font-weight:700;font-size:36px;line-height:44px;color:var(--color-text-primary)">Shell</span>
+        <span style="font-family:var(--font-body-md-family);font-weight:700;font-size:20px;line-height:24px;color:var(--color-text-primary)">2% cashback</span>
+      </div>
+      <div style="width:70px;height:70px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">
+        <img src="https://www.figma.com/api/mcp/asset/c7346eb4-bbe2-473e-9ca4-b45c4bb73956" alt="Shell" style="width:53px;height:55px;object-fit:contain"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail rows -->
+  <div style="flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:32px;padding-top:var(--space-600);padding-bottom:calc(env(safe-area-inset-bottom)+24px)">
+
+    <div style="display:flex;flex-direction:column">
+
+      <!-- Row 1 -->
+      <div style="background:#fff;display:flex;align-items:center;gap:16px;padding:0 0 0 var(--space-app-margin);min-height:64px">
+        <img src="https://www.figma.com/api/mcp/asset/3638c839-3c00-4180-96c3-ee68198a1773" alt="" style="width:24px;height:24px;flex-shrink:0;align-self:center;object-fit:contain"/>
+        <div style="flex:1;padding:20px 16px 20px 0;border-bottom:1px solid #f0f0f0;font-family:var(--font-body-md-family);font-weight:400;font-size:18px;line-height:24px;color:var(--color-text-primary)">
+          Use your Orbit Debit Card at Shell stations.
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div style="background:#fff;display:flex;align-items:center;gap:16px;padding:0 0 0 var(--space-app-margin);min-height:64px">
+        <img src="https://www.figma.com/api/mcp/asset/738261d6-9bf9-476d-be0b-de3bc841ed06" alt="" style="width:24px;height:24px;flex-shrink:0"/>
+        <div style="flex:1;padding:20px 16px 20px 0;border-bottom:1px solid #f0f0f0;font-family:var(--font-body-md-family);font-weight:400;font-size:18px;line-height:24px;color:var(--color-text-primary)">
+          Earn an extra 1% cashback on top of your base 2% fuel reward.
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div style="background:#fff;display:flex;align-items:center;gap:16px;padding:0 0 0 var(--space-app-margin);min-height:64px">
+        <img src="https://www.figma.com/api/mcp/asset/9158ee36-13fd-4ec8-ad9e-35505ed2e587" alt="" style="width:24px;height:24px;flex-shrink:0"/>
+        <div style="flex:1;padding:20px 16px 20px 0;border-bottom:1px solid #f0f0f0;font-family:var(--font-body-md-family);font-weight:400;font-size:18px;line-height:24px;color:var(--color-text-primary)">
+          Cashback is automatically applied after eligible transaction(s).
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Terms -->
+    <div style="padding:12px var(--space-app-margin);font-family:var(--font-body-md-family);font-weight:400;font-size:14px;line-height:20px;color:var(--color-text-tertiary)">
+      Cashback is accrued as Orbit Cash. Enjoy 2% cashback on purchases up to $50 reward amount at Shell when you pay with your Orbit Debit card.
+      <strong> This offer is only applicable to transactions made at the fuel pump.</strong>
+    </div>
+
+  </div>
+</div><!-- /page-shell-offer -->
+
 <!-- ── PLACEHOLDER PAGES (slide in from right like transactions) ── -->
 
 <div class="transfer-page" id="page-transfer-money">
@@ -2021,9 +3269,7 @@
   <div class="tf-topbar">
     <div class="tf-nav">
       <button class="tf-back" id="tf-back-btn" aria-label="Back">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M15 19l-7-7 7-7" stroke="#353535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="https://www.figma.com/api/mcp/asset/8a412880-eaea-47c4-965b-b585cfae285f" alt="" style="width:24px;height:24px"/>
       </button>
       <span class="tf-title">Transfer</span>
     </div>
@@ -2160,54 +3406,38 @@
 
 
 
+
+
+
+
 </div><!-- /app-shell -->
 <!-- ── PERSISTENT BOTTOM NAV (app-shell level) ─────────────────────── -->
 <nav class="bottom-nav" id="main-nav">
 
     <!-- Wallet -->
     <div class="nav-item nav-active" id="nav-wallet" onclick="switchTab('wallet')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon" id="nav-wallet-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M21 7H5a2 2 0 00-2 2v9a2 2 0 002 2h16a1 1 0 001-1V8a1 1 0 00-1-1z" fill="#001b96"/>
-          <circle cx="17.5" cy="13.5" r="1.5" fill="white"/>
-          <path d="M5 7l1.5-3h11L19 7" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+      <div class="nav-icon" id="nav-wallet-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 4.5H4.5C3.90326 4.5 3.33097 4.73705 2.90901 5.15901C2.48705 5.58097 2.25 6.15326 2.25 6.75V17.25C2.25 17.8467 2.48705 18.419 2.90901 18.841C3.33097 19.2629 3.90326 19.5 4.5 19.5H19.5C20.0967 19.5 20.669 19.2629 21.091 18.841C21.5129 18.419 21.75 17.8467 21.75 17.25V6.75C21.75 6.15326 21.5129 5.58097 21.091 5.15901C20.669 4.73705 20.0967 4.5 19.5 4.5ZM14.25 11.25C14.25 11.8467 14.0129 12.419 13.591 12.841C13.169 13.2629 12.5967 13.5 12 13.5C11.4033 13.5 10.831 13.2629 10.409 12.841C9.98705 12.419 9.75 11.8467 9.75 11.25C9.75 11.0511 9.67098 10.8603 9.53033 10.7197C9.38968 10.579 9.19891 10.5 9 10.5H3.75V9H20.25V10.5H15C14.8011 10.5 14.6103 10.579 14.4697 10.7197C14.329 10.8603 14.25 11.0511 14.25 11.25ZM4.5 6H19.5C19.6989 6 19.8897 6.07902 20.0303 6.21967C20.171 6.36032 20.25 6.55109 20.25 6.75V7.5H3.75V6.75C3.75 6.55109 3.82902 6.36032 3.96967 6.21967C4.11032 6.07902 4.30109 6 4.5 6Z" fill="#001b96"/></svg></div>
       <span class="nav-label nav-label--active" id="nav-wallet-label">Wallet</span>
       <div class="nav-dot" style="opacity:1"></div>
     </div>
 
     <!-- Payment -->
     <div class="nav-item" id="nav-payment" onclick="switchTab('payment')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon" id="nav-payment-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#727272" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
+      <div class="nav-icon" id="nav-payment-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.8717 17.573L16.8717 20.573C16.6603 20.7843 16.3737 20.9031 16.0748 20.9031C15.7759 20.9031 15.4893 20.7843 15.2779 20.573C15.0666 20.3617 14.9478 20.075 14.9478 19.7761C14.9478 19.4772 15.0666 19.1906 15.2779 18.9792L16.357 17.9021H4.07572C3.77735 17.9021 3.4912 17.7835 3.28023 17.5726C3.06925 17.3616 2.95072 17.0754 2.95072 16.7771C2.95072 16.4787 3.06925 16.1925 3.28023 15.9816C3.4912 15.7706 3.77735 15.6521 4.07572 15.6521H16.357L15.277 14.573C15.0656 14.3617 14.9469 14.075 14.9469 13.7761C14.9469 13.4772 15.0656 13.1906 15.277 12.9792C15.4883 12.7679 15.775 12.6492 16.0738 12.6492C16.3727 12.6492 16.6594 12.7679 16.8707 12.9792L19.8707 15.9792C19.9757 16.0837 20.059 16.2078 20.1158 16.3446C20.1727 16.4813 20.202 16.6279 20.2021 16.7759C20.2022 16.924 20.173 17.0706 20.1163 17.2074C20.0596 17.3442 19.9765 17.4684 19.8717 17.573ZM6.27791 11.573C6.48925 11.7843 6.7759 11.9031 7.07478 11.9031C7.37367 11.9031 7.66031 11.7843 7.87166 11.573C8.083 11.3617 8.20174 11.075 8.20174 10.7761C8.20174 10.4772 8.083 10.1906 7.87166 9.97925L6.79447 8.90206H19.0757C19.3741 8.90206 19.6602 8.78353 19.8712 8.57255C20.0822 8.36158 20.2007 8.07543 20.2007 7.77706C20.2007 7.47869 20.0822 7.19254 19.8712 6.98156C19.6602 6.77059 19.3741 6.65206 19.0757 6.65206H6.79447L7.87166 5.573C8.083 5.36165 8.20174 5.07501 8.20174 4.77612C8.20174 4.47724 8.083 4.19059 7.87166 3.97925C7.66031 3.7679 7.37367 3.64917 7.07478 3.64917C6.7759 3.64917 6.48925 3.7679 6.27791 3.97925L3.27791 6.97925C3.17303 7.08376 3.08981 7.20796 3.03303 7.3447C2.97625 7.48145 2.94702 7.62806 2.94702 7.77612C2.94702 7.92419 2.97625 8.0708 3.03303 8.20754C3.08981 8.34429 3.17303 8.46848 3.27791 8.573L6.27791 11.573Z" fill="#727272"/></svg></div>
       <span class="nav-label nav-label--inactive" id="nav-payment-label">Payment</span>
       <div class="nav-dot" style="opacity:0"></div>
     </div>
 
     <!-- Card -->
-    <div class="nav-item" id="nav-card" onclick="alert('Card coming soon')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="5" width="20" height="14" rx="2" stroke="#727272" stroke-width="1.7"/>
-          <path d="M2 10h20" stroke="#727272" stroke-width="1.7"/>
-          <path d="M6 15h5" stroke="#727272" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-      </div>
+    <div class="nav-item" id="nav-card" onclick="switchTab('card')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0371 4.30713H3.03711C2.53983 4.30713 2.06291 4.50467 1.71128 4.8563C1.35965 5.20793 1.16211 5.68485 1.16211 6.18213V18.1821C1.16211 18.6794 1.35965 19.1563 1.71128 19.508C2.06291 19.8596 2.53983 20.0571 3.03711 20.0571H21.0371C21.5344 20.0571 22.0113 19.8596 22.3629 19.508C22.7146 19.1563 22.9121 18.6794 22.9121 18.1821V6.18213C22.9121 5.68485 22.7146 5.20793 22.3629 4.8563C22.0113 4.50467 21.5344 4.30713 21.0371 4.30713ZM20.6621 6.55713V8.43213H3.41211V6.55713H20.6621ZM3.41211 17.8071V10.6821H20.6621V17.8071H3.41211ZM19.5371 15.5571C19.5371 15.8555 19.4186 16.1416 19.2076 16.3526C18.9966 16.5636 18.7105 16.6821 18.4121 16.6821H15.4121C15.1137 16.6821 14.8276 16.5636 14.6166 16.3526C14.4056 16.1416 14.2871 15.8555 14.2871 15.5571C14.2871 15.2588 14.4056 14.9726 14.6166 14.7616C14.8276 14.5507 15.1137 14.4321 15.4121 14.4321H18.4121C18.7105 14.4321 18.9966 14.5507 19.2076 14.7616C19.4186 14.9726 19.5371 15.2588 19.5371 15.5571ZM13.1621 15.5571C13.1621 15.8555 13.0436 16.1416 12.8326 16.3526C12.6216 16.5636 12.3355 16.6821 12.0371 16.6821H10.9121C10.6137 16.6821 10.3276 16.5636 10.1166 16.3526C9.90564 16.1416 9.78711 15.8555 9.78711 15.5571C9.78711 15.2588 9.90564 14.9726 10.1166 14.7616C10.3276 14.5507 10.6137 14.4321 10.9121 14.4321H12.0371C12.3355 14.4321 12.6216 14.5507 12.8326 14.7616C13.0436 14.9726 13.1621 15.2588 13.1621 15.5571Z" fill="#727272"/></svg></div>
       <span class="nav-label nav-label--inactive">Card</span>
       <div class="nav-dot" style="opacity:0"></div>
     </div>
 
     <!-- Perks -->
-    <div class="nav-item" id="nav-perks" onclick="alert('Perks coming soon')" style="-webkit-tap-highlight-color:transparent">
-      <div class="nav-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2l2.9 7.26L22 10.27l-5.46 5.32 1.29 7.51L12 19.27l-5.83 3.83 1.29-7.51L2 10.27l7.1-1.01L12 2z" stroke="#727272" stroke-width="1.7" stroke-linejoin="round"/>
-        </svg>
-      </div>
+    <div class="nav-item" id="nav-perks" onclick="switchTab('perks')" style="-webkit-tap-highlight-color:transparent">
+      <div class="nav-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.8182 9.18205C22.702 8.82328 22.4819 8.50706 22.1858 8.27342C21.8898 8.03979 21.5311 7.89923 21.1551 7.86955L15.8498 7.44111L13.8023 2.49018C13.6584 2.14026 13.4138 1.84101 13.0995 1.63041C12.7851 1.41981 12.4153 1.30737 12.037 1.30737C11.6586 1.30737 11.2888 1.41981 10.9745 1.63041C10.6602 1.84101 10.4156 2.14026 10.2717 2.49018L8.22606 7.44205L2.92074 7.86955C2.54408 7.90062 2.18499 8.04232 1.88862 8.27685C1.59225 8.51138 1.3718 8.82828 1.25499 9.18772C1.13819 9.54716 1.13022 9.93311 1.23211 10.2971C1.33399 10.661 1.54117 10.9867 1.82762 11.2333L5.87574 14.7246L4.63824 19.9464C4.54799 20.3146 4.56934 20.7013 4.69958 21.0573C4.82982 21.4133 5.06306 21.7224 5.3696 21.9454C5.67614 22.1684 6.04211 22.2951 6.42091 22.3095C6.7997 22.3238 7.17419 22.225 7.49668 22.0258L12.037 19.2311L16.5773 22.0258C16.8997 22.2237 17.2736 22.3215 17.6516 22.3068C18.0296 22.2921 18.3947 22.1655 18.7008 21.9432C19.0068 21.7209 19.24 21.4127 19.3709 21.0578C19.5017 20.7028 19.5243 20.317 19.4357 19.9492L18.1982 14.7274L22.2464 11.2361C22.5345 10.989 22.7427 10.6617 22.8446 10.296C22.9464 9.93029 22.9372 9.54256 22.8182 9.18205ZM16.2117 13.4664C16.0556 13.601 15.9395 13.7759 15.876 13.9719C15.8125 14.168 15.8041 14.3778 15.8517 14.5783L17.0601 19.6821L12.6267 16.9558C12.4494 16.8467 12.2452 16.7889 12.037 16.7889C11.8288 16.7889 11.6246 16.8467 11.4473 16.9558L7.01387 19.6821L8.2223 14.5821C8.2699 14.3815 8.2615 14.1718 8.19802 13.9757C8.13453 13.7796 8.0184 13.6048 7.86231 13.4702L3.89949 10.0483L9.09324 9.62924C9.29993 9.61263 9.498 9.53923 9.66559 9.41714C9.83318 9.29504 9.96377 9.12901 10.0429 8.93736L12.037 4.10924L14.0311 8.93736C14.1102 9.12901 14.2408 9.29504 14.4084 9.41714C14.576 9.53923 14.7741 9.61263 14.9807 9.62924L20.1745 10.0483L16.2117 13.4664Z" fill="#727272"/></svg></div>
       <span class="nav-label nav-label--inactive">Perks</span>
       <div class="nav-dot" style="opacity:0"></div>
     </div>
@@ -2232,9 +3462,7 @@
   <div class="review-topbar">
     <div class="review-nav">
       <button class="review-back" id="review-back-btn" aria-label="Back">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M15 19l-7-7 7-7" stroke="#353535" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <img src="https://www.figma.com/api/mcp/asset/8a412880-eaea-47c4-965b-b585cfae285f" alt="" style="width:24px;height:24px"/>
       </button>
       <span class="review-title">Review transfer</span>
     </div>
@@ -2301,10 +3529,12 @@
   const pageHome = document.getElementById('page-home');
   const pageTx   = document.getElementById('page-transactions');
   const pagePay  = document.getElementById('page-payment');
+  const pageCard  = document.getElementById('page-card');
+  const pagePerks = document.getElementById('page-perks');
 
   // ── DRILL-DOWN NAVIGATION (slide push/pop) ─────────────────────────
   // Placeholder page ids
-  const PLACEHOLDER_PAGES = ['transfer-money', 'transfer-savings', 'receive-money', 'payees'];
+  const PLACEHOLDER_PAGES = ['transfer-money', 'transfer-savings', 'receive-money', 'payees', 'shell-offer'];
 
   function navigateTo(dest) {
     if (dest === 'transactions') {
@@ -2345,20 +3575,18 @@
   });
 
   // ── TAB NAVIGATION (cross-fade) ────────────────────────────────────
-  const TAB_PAGES = { wallet: pageHome, payment: pagePay };
+  const TAB_PAGES = { wallet: pageHome, payment: pagePay, card: pageCard, perks: pagePerks };
   const TAB_NAV_ITEMS = {
     wallet:  document.getElementById('nav-wallet'),
     payment: document.getElementById('nav-payment'),
+    card:    document.getElementById('nav-card'),
+    perks:   document.getElementById('nav-perks'),
   };
-  const NAV_ICON_SVG = {
-    wallet: {
-      active:   '<path d="M21 7H5a2 2 0 00-2 2v9a2 2 0 002 2h16a1 1 0 001-1V8a1 1 0 00-1-1z" fill="#001b96"/><circle cx="17.5" cy="13.5" r="1.5" fill="white"/><path d="M5 7l1.5-3h11L19 7" stroke="#001b96" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
-      inactive: '<path d="M21 7H5a2 2 0 00-2 2v9a2 2 0 002 2h16a1 1 0 001-1V8a1 1 0 00-1-1z" stroke="#727272" stroke-width="1.7" fill="none"/><circle cx="17.5" cy="13.5" r="1.5" fill="#727272"/><path d="M5 7l1.5-3h11L19 7" stroke="#727272" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
-    },
-    payment: {
-      active:   '<path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#001b96" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>',
-      inactive: '<path d="M5 9h14M16 5l4 4-4 4M19 15H5M9 11l-4 4 4 4" stroke="#727272" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
-    }
+  const NAV_ICON_ASSETS = {
+    wallet:  { active: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 4.5H4.5C3.90326 4.5 3.33097 4.73705 2.90901 5.15901C2.48705 5.58097 2.25 6.15326 2.25 6.75V17.25C2.25 17.8467 2.48705 18.419 2.90901 18.841C3.33097 19.2629 3.90326 19.5 4.5 19.5H19.5C20.0967 19.5 20.669 19.2629 21.091 18.841C21.5129 18.419 21.75 17.8467 21.75 17.25V6.75C21.75 6.15326 21.5129 5.58097 21.091 5.15901C20.669 4.73705 20.0967 4.5 19.5 4.5ZM14.25 11.25C14.25 11.8467 14.0129 12.419 13.591 12.841C13.169 13.2629 12.5967 13.5 12 13.5C11.4033 13.5 10.831 13.2629 10.409 12.841C9.98705 12.419 9.75 11.8467 9.75 11.25C9.75 11.0511 9.67098 10.8603 9.53033 10.7197C9.38968 10.579 9.19891 10.5 9 10.5H3.75V9H20.25V10.5H15C14.8011 10.5 14.6103 10.579 14.4697 10.7197C14.329 10.8603 14.25 11.0511 14.25 11.25ZM4.5 6H19.5C19.6989 6 19.8897 6.07902 20.0303 6.21967C20.171 6.36032 20.25 6.55109 20.25 6.75V7.5H3.75V6.75C3.75 6.55109 3.82902 6.36032 3.96967 6.21967C4.11032 6.07902 4.30109 6 4.5 6Z" fill="#001b96"/></svg>`,   inactive: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.9614 4.40698H4.96143C4.26523 4.40698 3.59755 4.68354 3.10527 5.17583C2.61299 5.66811 2.33643 6.33579 2.33643 7.03198V17.532C2.33643 18.2282 2.61299 18.8959 3.10527 19.3881C3.59755 19.8804 4.26523 20.157 4.96143 20.157H19.9614C20.3061 20.157 20.6475 20.0891 20.966 19.9572C21.2844 19.8252 21.5738 19.6319 21.8176 19.3881C22.0613 19.1444 22.2547 18.855 22.3866 18.5365C22.5185 18.218 22.5864 17.8767 22.5864 17.532V7.03198C22.5864 6.68726 22.5185 6.34592 22.3866 6.02744C22.2547 5.70896 22.0613 5.41958 21.8176 5.17583C21.5738 4.93207 21.2844 4.73872 20.966 4.6068C20.6475 4.47488 20.3061 4.40698 19.9614 4.40698ZM4.96143 6.65698H19.9614C20.0609 6.65698 20.1563 6.69649 20.2266 6.76682C20.2969 6.83714 20.3364 6.93253 20.3364 7.03198V8.53198H15.4614C15.1631 8.53198 14.8769 8.65051 14.6659 8.86149C14.455 9.07247 14.3364 9.35861 14.3364 9.65698C14.3364 10.1543 14.1389 10.6312 13.7873 10.9828C13.4356 11.3344 12.9587 11.532 12.4614 11.532C11.9641 11.532 11.4872 11.3344 11.1356 10.9828C10.784 10.6312 10.5864 10.1543 10.5864 9.65698C10.5864 9.35861 10.4679 9.07247 10.2569 8.86149C10.0459 8.65051 9.75979 8.53198 9.46143 8.53198H4.58643V7.03198C4.58643 6.93253 4.62593 6.83714 4.69626 6.76682C4.76659 6.69649 4.86197 6.65698 4.96143 6.65698ZM19.9614 17.907H4.96143C4.86197 17.907 4.76659 17.8675 4.69626 17.7971C4.62593 17.7268 4.58643 17.6314 4.58643 17.532V10.782H8.49205C8.73648 11.6464 9.25642 12.4075 9.97286 12.9494C10.6893 13.4914 11.5631 13.7846 12.4614 13.7846C13.3598 13.7846 14.2335 13.4914 14.95 12.9494C15.6664 12.4075 16.1864 11.6464 16.4308 10.782H20.3364V17.532C20.3364 17.6314 20.2969 17.7268 20.2266 17.7971C20.1563 17.8675 20.0609 17.907 19.9614 17.907Z" fill="#727272"/></svg>`  },
+    card:    { active: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 4.5H3C2.60218 4.5 2.22064 4.65804 1.93934 4.93934C1.65804 5.22064 1.5 5.60218 1.5 6V18C1.5 18.3978 1.65804 18.7794 1.93934 19.0607C2.22064 19.342 2.60218 19.5 3 19.5H21C21.3978 19.5 21.7794 19.342 22.0607 19.0607C22.342 18.7794 22.5 18.3978 22.5 18V6C22.5 5.60218 22.342 5.22064 22.0607 4.93934C21.7794 4.65804 21.3978 4.5 21 4.5ZM12.75 16.5H11.25C11.0511 16.5 10.8603 16.421 10.7197 16.2803C10.579 16.1397 10.5 15.9489 10.5 15.75C10.5 15.5511 10.579 15.3603 10.7197 15.2197C10.8603 15.079 11.0511 15 11.25 15H12.75C12.9489 15 13.1397 15.079 13.2803 15.2197C13.421 15.3603 13.5 15.5511 13.5 15.75C13.5 15.9489 13.421 16.1397 13.2803 16.2803C13.1397 16.421 12.9489 16.5 12.75 16.5ZM18.75 16.5H15.75C15.5511 16.5 15.3603 16.421 15.2197 16.2803C15.079 16.1397 15 15.9489 15 15.75C15 15.5511 15.079 15.3603 15.2197 15.2197C15.3603 15.079 15.5511 15 15.75 15H18.75C18.9489 15 19.1397 15.079 19.2803 15.2197C19.421 15.3603 19.5 15.5511 19.5 15.75C19.5 15.9489 19.421 16.1397 19.2803 16.2803C19.1397 16.421 18.9489 16.5 18.75 16.5ZM3 8.25V6H21V8.25H3Z" fill="#001b96"/></svg>`,     inactive: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.0371 4.30713H3.03711C2.53983 4.30713 2.06291 4.50467 1.71128 4.8563C1.35965 5.20793 1.16211 5.68485 1.16211 6.18213V18.1821C1.16211 18.6794 1.35965 19.1563 1.71128 19.508C2.06291 19.8596 2.53983 20.0571 3.03711 20.0571H21.0371C21.5344 20.0571 22.0113 19.8596 22.3629 19.508C22.7146 19.1563 22.9121 18.6794 22.9121 18.1821V6.18213C22.9121 5.68485 22.7146 5.20793 22.3629 4.8563C22.0113 4.50467 21.5344 4.30713 21.0371 4.30713ZM20.6621 6.55713V8.43213H3.41211V6.55713H20.6621ZM3.41211 17.8071V10.6821H20.6621V17.8071H3.41211ZM19.5371 15.5571C19.5371 15.8555 19.4186 16.1416 19.2076 16.3526C18.9966 16.5636 18.7105 16.6821 18.4121 16.6821H15.4121C15.1137 16.6821 14.8276 16.5636 14.6166 16.3526C14.4056 16.1416 14.2871 15.8555 14.2871 15.5571C14.2871 15.2588 14.4056 14.9726 14.6166 14.7616C14.8276 14.5507 15.1137 14.4321 15.4121 14.4321H18.4121C18.7105 14.4321 18.9966 14.5507 19.2076 14.7616C19.4186 14.9726 19.5371 15.2588 19.5371 15.5571ZM13.1621 15.5571C13.1621 15.8555 13.0436 16.1416 12.8326 16.3526C12.6216 16.5636 12.3355 16.6821 12.0371 16.6821H10.9121C10.6137 16.6821 10.3276 16.5636 10.1166 16.3526C9.90564 16.1416 9.78711 15.8555 9.78711 15.5571C9.78711 15.2588 9.90564 14.9726 10.1166 14.7616C10.3276 14.5507 10.6137 14.4321 10.9121 14.4321H12.0371C12.3355 14.4321 12.6216 14.5507 12.8326 14.7616C13.0436 14.9726 13.1621 15.2588 13.1621 15.5571Z" fill="#727272"/></svg>`    },
+    perks:   { active: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.9646 10.7671L17.7459 14.4074L19.0312 19.8515C19.1021 20.147 19.0838 20.4569 18.9787 20.7421C18.8736 21.0272 18.6863 21.2748 18.4405 21.4536C18.1947 21.6324 17.9015 21.7343 17.5978 21.7465C17.2941 21.7587 16.9936 21.6806 16.7343 21.5221L11.9999 18.6083L7.26275 21.5221C7.00347 21.6797 6.70335 21.757 6.4002 21.7444C6.09704 21.7318 5.8044 21.6297 5.55913 21.4511C5.31386 21.2725 5.12692 21.0253 5.02185 20.7406C4.91679 20.456 4.89829 20.1466 4.96869 19.8515L6.25869 14.4074L2.03994 10.7671C1.81053 10.5688 1.64462 10.3074 1.56293 10.0154C1.48123 9.72336 1.48737 9.41376 1.58058 9.12522C1.67379 8.83669 1.84994 8.58201 2.08703 8.39299C2.32412 8.20397 2.61164 8.08899 2.91369 8.06241L8.44494 7.61616L10.5787 2.45241C10.6942 2.17099 10.8908 1.93027 11.1434 1.76085C11.3961 1.59143 11.6934 1.50098 11.9976 1.50098C12.3018 1.50098 12.5991 1.59143 12.8518 1.76085C13.1044 1.93027 13.301 2.17099 13.4165 2.45241L15.5493 7.61616L21.0806 8.06241C21.3832 8.088 21.6716 8.20234 21.9095 8.3911C22.1475 8.57986 22.3244 8.83464 22.4182 9.12352C22.512 9.41241 22.5185 9.72254 22.4368 10.0151C22.3551 10.3076 22.1889 10.5695 21.959 10.768L21.9646 10.7671Z" fill="#001b96"/></svg>`,    inactive: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.8182 9.18205C22.702 8.82328 22.4819 8.50706 22.1858 8.27342C21.8898 8.03979 21.5311 7.89923 21.1551 7.86955L15.8498 7.44111L13.8023 2.49018C13.6584 2.14026 13.4138 1.84101 13.0995 1.63041C12.7851 1.41981 12.4153 1.30737 12.037 1.30737C11.6586 1.30737 11.2888 1.41981 10.9745 1.63041C10.6602 1.84101 10.4156 2.14026 10.2717 2.49018L8.22606 7.44205L2.92074 7.86955C2.54408 7.90062 2.18499 8.04232 1.88862 8.27685C1.59225 8.51138 1.3718 8.82828 1.25499 9.18772C1.13819 9.54716 1.13022 9.93311 1.23211 10.2971C1.33399 10.661 1.54117 10.9867 1.82762 11.2333L5.87574 14.7246L4.63824 19.9464C4.54799 20.3146 4.56934 20.7013 4.69958 21.0573C4.82982 21.4133 5.06306 21.7224 5.3696 21.9454C5.67614 22.1684 6.04211 22.2951 6.42091 22.3095C6.7997 22.3238 7.17419 22.225 7.49668 22.0258L12.037 19.2311L16.5773 22.0258C16.8997 22.2237 17.2736 22.3215 17.6516 22.3068C18.0296 22.2921 18.3947 22.1655 18.7008 21.9432C19.0068 21.7209 19.24 21.4127 19.3709 21.0578C19.5017 20.7028 19.5243 20.317 19.4357 19.9492L18.1982 14.7274L22.2464 11.2361C22.5345 10.989 22.7427 10.6617 22.8446 10.296C22.9464 9.93029 22.9372 9.54256 22.8182 9.18205ZM16.2117 13.4664C16.0556 13.601 15.9395 13.7759 15.876 13.9719C15.8125 14.168 15.8041 14.3778 15.8517 14.5783L17.0601 19.6821L12.6267 16.9558C12.4494 16.8467 12.2452 16.7889 12.037 16.7889C11.8288 16.7889 11.6246 16.8467 11.4473 16.9558L7.01387 19.6821L8.2223 14.5821C8.2699 14.3815 8.2615 14.1718 8.19802 13.9757C8.13453 13.7796 8.0184 13.6048 7.86231 13.4702L3.89949 10.0483L9.09324 9.62924C9.29993 9.61263 9.498 9.53923 9.66559 9.41714C9.83318 9.29504 9.96377 9.12901 10.0429 8.93736L12.037 4.10924L14.0311 8.93736C14.1102 9.12901 14.2408 9.29504 14.4084 9.41714C14.576 9.53923 14.7741 9.61263 14.9807 9.62924L20.1745 10.0483L16.2117 13.4664Z" fill="#727272"/></svg>`   },
+    payment: { active: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20.0838 17.573L17.0838 20.573C16.8725 20.7843 16.5858 20.9031 16.2869 20.9031C15.9881 20.9031 15.7014 20.7843 15.4901 20.573C15.2787 20.3617 15.16 20.075 15.16 19.7761C15.16 19.4772 15.2787 19.1906 15.4901 18.9792L16.5691 17.9021H4.28788C3.98951 17.9021 3.70336 17.7835 3.49238 17.5726C3.28141 17.3616 3.16288 17.0754 3.16288 16.7771C3.16288 16.4787 3.28141 16.1925 3.49238 15.9816C3.70336 15.7706 3.98951 15.6521 4.28788 15.6521H16.5691L15.4891 14.573C15.2778 14.3617 15.1591 14.075 15.1591 13.7761C15.1591 13.4772 15.2778 13.1906 15.4891 12.9792C15.7005 12.7679 15.9871 12.6492 16.286 12.6492C16.5849 12.6492 16.8715 12.7679 17.0829 12.9792L20.0829 15.9792C20.1878 16.0837 20.2711 16.2078 20.328 16.3446C20.3848 16.4813 20.4141 16.6279 20.4142 16.7759C20.4143 16.924 20.3852 17.0706 20.3285 17.2074C20.2718 17.3442 20.1886 17.4684 20.0838 17.573ZM6.49007 11.573C6.70141 11.7843 6.98806 11.9031 7.28694 11.9031C7.58583 11.9031 7.87247 11.7843 8.08382 11.573C8.29516 11.3617 8.41389 11.075 8.41389 10.7761C8.41389 10.4772 8.29516 10.1906 8.08382 9.97925L7.00663 8.90206H19.2879C19.5862 8.90206 19.8724 8.78353 20.0834 8.57255C20.2944 8.36158 20.4129 8.07543 20.4129 7.77706C20.4129 7.47869 20.2944 7.19254 20.0834 6.98156C19.8724 6.77059 19.5862 6.65206 19.2879 6.65206H7.00663L8.08382 5.573C8.29516 5.36165 8.41389 5.07501 8.41389 4.77612C8.41389 4.47724 8.29516 4.19059 8.08382 3.97925C7.87247 3.7679 7.58583 3.64917 7.28694 3.64917C6.98806 3.64917 6.70141 3.7679 6.49007 3.97925L3.49007 6.97925C3.38519 7.08376 3.30197 7.20796 3.24519 7.3447C3.18841 7.48145 3.15918 7.62806 3.15918 7.77612C3.15918 7.92419 3.18841 8.0708 3.24519 8.20754C3.30197 8.34429 3.38519 8.46848 3.49007 8.573L6.49007 11.573Z" fill="#001b96"/></svg>`,  inactive: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.8717 17.573L16.8717 20.573C16.6603 20.7843 16.3737 20.9031 16.0748 20.9031C15.7759 20.9031 15.4893 20.7843 15.2779 20.573C15.0666 20.3617 14.9478 20.075 14.9478 19.7761C14.9478 19.4772 15.0666 19.1906 15.2779 18.9792L16.357 17.9021H4.07572C3.77735 17.9021 3.4912 17.7835 3.28023 17.5726C3.06925 17.3616 2.95072 17.0754 2.95072 16.7771C2.95072 16.4787 3.06925 16.1925 3.28023 15.9816C3.4912 15.7706 3.77735 15.6521 4.07572 15.6521H16.357L15.277 14.573C15.0656 14.3617 14.9469 14.075 14.9469 13.7761C14.9469 13.4772 15.0656 13.1906 15.277 12.9792C15.4883 12.7679 15.775 12.6492 16.0738 12.6492C16.3727 12.6492 16.6594 12.7679 16.8707 12.9792L19.8707 15.9792C19.9757 16.0837 20.059 16.2078 20.1158 16.3446C20.1727 16.4813 20.202 16.6279 20.2021 16.7759C20.2022 16.924 20.173 17.0706 20.1163 17.2074C20.0596 17.3442 19.9765 17.4684 19.8717 17.573ZM6.27791 11.573C6.48925 11.7843 6.7759 11.9031 7.07478 11.9031C7.37367 11.9031 7.66031 11.7843 7.87166 11.573C8.083 11.3617 8.20174 11.075 8.20174 10.7761C8.20174 10.4772 8.083 10.1906 7.87166 9.97925L6.79447 8.90206H19.0757C19.3741 8.90206 19.6602 8.78353 19.8712 8.57255C20.0822 8.36158 20.2007 8.07543 20.2007 7.77706C20.2007 7.47869 20.0822 7.19254 19.8712 6.98156C19.6602 6.77059 19.3741 6.65206 19.0757 6.65206H6.79447L7.87166 5.573C8.083 5.36165 8.20174 5.07501 8.20174 4.77612C8.20174 4.47724 8.083 4.19059 7.87166 3.97925C7.66031 3.7679 7.37367 3.64917 7.07478 3.64917C6.7759 3.64917 6.48925 3.7679 6.27791 3.97925L3.27791 6.97925C3.17303 7.08376 3.08981 7.20796 3.03303 7.3447C2.97625 7.48145 2.94702 7.62806 2.94702 7.77612C2.94702 7.92419 2.97625 8.0708 3.03303 8.20754C3.08981 8.34429 3.17303 8.46848 3.27791 8.573L6.27791 11.573Z" fill="#727272"/></svg>` },
   };
 
   let activeTab = 'wallet';
@@ -2398,9 +3626,9 @@
       if (dot) dot.style.opacity = isActive ? '1' : '0';
 
       // Icon swap
-      const svgEl = el.querySelector('.nav-icon svg');
-      if (svgEl && NAV_ICON_SVG[key]) {
-        svgEl.innerHTML = isActive ? NAV_ICON_SVG[key].active : NAV_ICON_SVG[key].inactive;
+      const navIconEl = el.querySelector('.nav-icon');
+      if (navIconEl && NAV_ICON_ASSETS[key]) {
+        navIconEl.innerHTML = isActive ? NAV_ICON_ASSETS[key].active : NAV_ICON_ASSETS[key].inactive;
       }
     });
   }
@@ -2801,6 +4029,86 @@
   })();
 </script>
 
+
+
+
+<script>
+  // ── CARD FLIP ─────────────────────────────────────────────────
+  (function() {
+    let flipped = false;
+    const EYE_SHOW = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4.54688C15.2573 4.54688 18.216 5.78534 20.5596 8.12891C22.317 9.88636 23.1091 11.6394 23.1426 11.7148C23.1826 11.8048 23.2031 11.9026 23.2031 12.001C23.2031 12.0992 23.1824 12.1963 23.1426 12.2861V12.2871C23.1087 12.3635 22.3165 14.1151 20.5596 15.8721C18.216 18.2147 15.2573 19.4531 12 19.4531C8.74268 19.4531 5.784 18.2147 3.44043 15.8721C1.68352 14.1152 0.891332 12.3635 0.857422 12.2871V12.2861C0.817567 12.1963 0.796881 12.0992 0.796875 12.001C0.796875 11.9026 0.817443 11.8048 0.857422 11.7148L0.858398 11.7139C0.887047 11.644 1.6821 9.88724 3.44043 8.12891C5.784 5.78534 8.74267 4.54688 12 4.54688ZM13.4531 8.49219C12.7593 8.20481 11.9953 8.12986 11.2588 8.27637C10.5225 8.42293 9.84631 8.78455 9.31543 9.31543C8.78455 9.84631 8.42294 10.5225 8.27637 11.2588C8.12986 11.9953 8.20481 12.7593 8.49219 13.4531C8.77957 14.1469 9.26627 14.74 9.89062 15.1572C10.515 15.5744 11.2491 15.7969 12 15.7969C13.007 15.7969 13.9725 15.3966 14.6846 14.6846C15.3966 13.9725 15.7969 13.007 15.7969 12C15.7969 11.2491 15.5744 10.515 15.1572 9.89062C14.74 9.26627 14.1469 8.77957 13.4531 8.49219Z" fill="white"/></svg>';
+    const EYE_HIDE = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.53125 3.04114C4.62416 3.04614 4.716 3.07005 4.7998 3.11047C4.88329 3.15082 4.95796 3.20716 5.01953 3.27649L5.02051 3.27747L20.0205 19.7775C20.0839 19.8456 20.1338 19.9255 20.166 20.0128C20.1982 20.1001 20.2129 20.1933 20.209 20.2863C20.2051 20.3791 20.182 20.4706 20.1426 20.5548C20.1032 20.6389 20.0473 20.714 19.9785 20.7765C19.9097 20.839 19.8297 20.8879 19.7422 20.9191C19.6547 20.9502 19.5615 20.964 19.4688 20.9591C19.3758 20.9541 19.284 20.9302 19.2002 20.8898C19.1165 20.8494 19.0421 20.7923 18.9805 20.7228H18.9795L16.9092 18.4493L16.8867 18.424L16.8564 18.4376C15.3273 19.1139 13.672 19.4604 12 19.4532L11.3926 19.4386C8.37508 19.294 5.63745 18.0683 3.44043 15.8722C1.68036 14.1121 0.885486 12.3572 0.858398 12.2882L0.857422 12.2863C0.817548 12.1965 0.796906 12.0993 0.796875 12.0011C0.796875 11.9027 0.817443 11.8049 0.857422 11.715L0.858398 11.714C0.88591 11.6466 1.68076 9.88772 3.44043 8.12805C4.14301 7.42228 4.92692 6.80177 5.77539 6.2804L5.82324 6.2511L5.78516 6.20911L3.97949 4.22278L3.89551 4.11145C3.87133 4.07215 3.85007 4.03092 3.83398 3.98743C3.80174 3.90017 3.78714 3.80693 3.79102 3.71399C3.7949 3.62103 3.818 3.52972 3.85742 3.44543C3.89684 3.36121 3.95266 3.28532 4.02148 3.22278C4.09017 3.16044 4.17045 3.11233 4.25781 3.08118C4.34532 3.05003 4.43849 3.03621 4.53125 3.04114ZM12 4.547C15.2572 4.547 18.2161 5.78473 20.5596 8.12805C22.3182 9.8867 23.1101 11.6418 23.1426 11.715C23.1826 11.8049 23.2031 11.9027 23.2031 12.0011C23.2031 12.0993 23.1825 12.1965 23.1426 12.2863C23.111 12.3575 22.3193 14.1125 20.5596 15.8722C20.2931 16.1374 20.0199 16.389 19.7393 16.6261H19.7383C19.6734 16.6811 19.5898 16.7088 19.5049 16.7032C19.42 16.6977 19.3404 16.6598 19.2832 16.5968L9.09863 5.39368C9.05991 5.35126 9.03292 5.29936 9.02051 5.24329C9.00812 5.18715 9.01007 5.12819 9.02734 5.07336C9.04464 5.01865 9.07688 4.9696 9.11914 4.93079C9.16131 4.89212 9.21274 4.86525 9.26855 4.85266H9.26953C10.1652 4.648 11.0812 4.54523 12 4.547ZM8.9375 9.75696C8.42219 10.4631 8.16616 11.3255 8.21289 12.1984C8.25962 13.0712 8.60665 13.901 9.19434 14.548C9.78211 15.195 10.5751 15.62 11.4395 15.7501C12.3039 15.8802 13.1872 15.7082 13.9395 15.2628L13.9883 15.2335L13.9502 15.1906L9.01074 9.75305L8.97168 9.71008L8.9375 9.75696Z" fill="white"/></svg>';
+
+    window.toggleCardDetails = function() {
+      flipped = !flipped;
+      const inner = document.getElementById('card-flip-inner');
+      const icon  = document.getElementById('card-details-icon');
+      const label = document.getElementById('card-details-label');
+      if (inner) inner.classList.toggle('flipped', flipped);
+      if (icon)  icon.innerHTML = flipped ? EYE_HIDE : EYE_SHOW;
+      if (label) label.textContent = flipped ? 'Hide details' : 'Show details';
+    };
+
+    // Reset flip when leaving card tab
+    const _origSwitchTab = switchTab;
+    window.switchTab = function(tab) {
+      if (tab !== 'card' && flipped) {
+        flipped = false;
+        const inner = document.getElementById('card-flip-inner');
+        const icon  = document.getElementById('card-details-icon');
+        const label = document.getElementById('card-details-label');
+        if (inner) inner.classList.remove('flipped');
+        if (icon)  icon.innerHTML = EYE_SHOW;
+        if (label) label.textContent = 'Show details';
+      }
+      _origSwitchTab(tab);
+    };
+  })();
+</script>
+<script>
+  // ── TRANSACTION DETAIL ────────────────────────────────────
+  (function() {
+    const page    = document.getElementById('page-tx-detail');
+    const elSign  = document.getElementById('tx-detail-sign');
+    const elValue = document.getElementById('tx-detail-value');
+    const elIcon  = document.getElementById('tx-detail-icon');
+    const elName  = document.getElementById('tx-detail-name');
+    const elCat   = document.getElementById('tx-detail-category');
+    const elDate  = document.getElementById('tx-detail-date');
+    const elType  = document.getElementById('tx-detail-type');
+
+    const ICONS = {
+      payout:   '<img src="https://www.figma.com/api/mcp/asset/38e1f019-33ef-459d-8c96-d8a34a787060" alt="" style="width:32px;height:32px;border-radius:50%"/>',
+      purchase: '<img src="https://www.figma.com/api/mcp/asset/82197d86-6272-4c03-a1b3-472dcdd13a3b" alt="" style="width:24px;height:24px"/>',
+      transfer: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 16V8m0 0L4 11m3-3l3 3M17 8v8m0 0l3-3m-3 3l-3-3" stroke="#001b96" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+
+    window.openTxDetail = function(data) {
+      elSign.textContent  = data.sign === '+' ? '+' : '−';
+      elValue.textContent = '$' + data.amount.replace('$','');
+      elIcon.innerHTML    = ICONS[data.icon] || ICONS.purchase;
+      elName.textContent  = data.name;
+      elCat.textContent   = data.category;
+      elDate.textContent  = data.date;
+      elType.textContent  = data.type;
+
+      page.classList.add('slide-in');
+      history.pushState({ page: 'tx-detail' }, '', '#tx-detail');
+    };
+
+    window.closeTxDetail = function() {
+      page.classList.remove('slide-in');
+      history.back();
+    };
+
+    // Handle popstate (swipe back / browser back)
+    window.addEventListener('popstate', function(e) {
+      if (page.classList.contains('slide-in')) {
+        page.classList.remove('slide-in');
+      }
+    });
+  })();
+</script>
 <!-- PWA: Service Worker Registration -->
 <script>
   if ('serviceWorker' in navigator) {
