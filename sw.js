@@ -1,4 +1,4 @@
-const CACHE_NAME = 'orbit-wallet-v2';
+const CACHE_NAME = 'orbit-wallet-v3';
 
 // Paths relative to the SW's own location (repo root on GitHub Pages)
 const PRECACHE_URLS = [
