@@ -244,7 +244,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: clip; /* clip not hidden — avoids BFC that suppresses iOS scroll */
-    padding: var(--space-400) 0 calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    padding: var(--space-400) 0 calc(var(--nav-h) + 24px);
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -677,7 +677,7 @@
   }
   .page--home { transform: translateX(0); z-index: 1; }
   .page--home.slide-out { transform: translateX(-28%); }
-  .page--transactions { transform: translateX(100%); z-index: 22; background: #fff; visibility: hidden; bottom: 0; padding-bottom: env(safe-area-inset-bottom); }
+  .page--transactions { transform: translateX(100%); z-index: 22; background: #fff; visibility: hidden; bottom: 0; }
   .page--transactions.slide-in { transform: translateX(0); box-shadow: -4px 0 24px rgba(0,0,0,0.12); visibility: visible; }
   .page--home::after {
     content: '';
@@ -734,7 +734,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 var(--space-app-margin) max(32px, calc(env(safe-area-inset-bottom) + 16px));
+    padding: 0 var(--space-app-margin) 32px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -1646,7 +1646,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 12px 0 calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    padding: 12px 0 calc(var(--nav-h) + 24px);
     display: flex;
     flex-direction: column;
     gap: var(--space-section-gap);
@@ -1908,7 +1908,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 12px 0 calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    padding: 12px 0 calc(var(--nav-h) + 24px);
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -2218,7 +2218,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 var(--space-app-margin) calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+    padding: 0 var(--space-app-margin) calc(var(--nav-h) + 24px);
     display: flex;
     flex-direction: column;
     gap: 24px;
