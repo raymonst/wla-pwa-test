@@ -3581,7 +3581,7 @@
       // go home / back to wallet
       pageTx.classList.remove('slide-in');
       pageHome.classList.remove('slide-out');
-      if (nav) nav.style.display = '';
+      if (nav) { nav.style.display = ''; refreshNav(); }
       history.pushState({ page: 'home' }, '', '#');
     }
   }
@@ -3600,7 +3600,7 @@
     const txDetailOpen = document.getElementById('page-tx-detail') && document.getElementById('page-tx-detail').classList.contains('slide-in');
     if (!anyOpen && !txOpen && !txDetailOpen) {
       const nav = document.getElementById('main-nav');
-      if (nav) nav.style.display = '';
+      if (nav) nav.style.display = ''; refreshNav();
     }
     history.back();
   }
@@ -3611,7 +3611,7 @@
     if (page === 'home') {
       pageTx.classList.remove('slide-in');
       pageHome.classList.remove('slide-out');
-      if (nav) nav.style.display = '';
+      if (nav) nav.style.display = ''; refreshNav();
     } else if (PLACEHOLDER_PAGES.includes(page)) {
       // handled by navigateBack
     }
@@ -3669,6 +3669,26 @@
       if (dot) dot.style.opacity = isActive ? '1' : '0';
 
       // Icon swap
+      const navIconEl = el.querySelector('.nav-icon');
+      if (navIconEl && NAV_ICON_ASSETS[key]) {
+        navIconEl.innerHTML = isActive ? NAV_ICON_ASSETS[key].active : NAV_ICON_ASSETS[key].inactive;
+      }
+    });
+  }
+
+  function refreshNav() {
+    // Re-sync all nav dots/labels/icons to match activeTab
+    // Called after nav is shown again following a drill-down
+    Object.entries(TAB_NAV_ITEMS).forEach(([key, el]) => {
+      if (!el) return;
+      const isActive = key === activeTab;
+      const dot = el.querySelector('.nav-dot');
+      if (dot) dot.style.opacity = isActive ? '1' : '0';
+      const label = el.querySelector('.nav-label');
+      if (label) {
+        label.classList.toggle('nav-label--active', isActive);
+        label.classList.toggle('nav-label--inactive', !isActive);
+      }
       const navIconEl = el.querySelector('.nav-icon');
       if (navIconEl && NAV_ICON_ASSETS[key]) {
         navIconEl.innerHTML = isActive ? NAV_ICON_ASSETS[key].active : NAV_ICON_ASSETS[key].inactive;
@@ -4143,7 +4163,7 @@
     window.closeTxDetail = function() {
       page.classList.remove('slide-in');
       const _nav = document.getElementById('main-nav');
-      if (_nav) _nav.style.display = '';
+      if (_nav) _nav.style.display = ''; refreshNav();
       history.back();
     };
 
