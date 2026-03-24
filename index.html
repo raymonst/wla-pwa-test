@@ -609,23 +609,8 @@
     align-items: center;
     padding-top: var(--space-300);
     padding-bottom: 0;
-<<<<<<< Updated upstream
-    z-index: 20;
-=======
     z-index: 100;
     pointer-events: auto;
-  }
-  /* In PWA standalone mode, extend nav to cover home indicator area */
-  @media (display-mode: standalone) {
-    .page {
-      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
-    }
-    .bottom-nav {
-      height: calc(var(--nav-h) + env(safe-area-inset-bottom));
-      padding-bottom: env(safe-area-inset-bottom);
-      align-items: flex-start;
-    }
->>>>>>> Stashed changes
   }
   /* In PWA standalone mode, extend nav to cover home indicator area */
   @media (display-mode: standalone) {
@@ -3620,12 +3605,6 @@
     });
     const txOpen = pageTx && pageTx.classList.contains('slide-in');
     const txDetailOpen = document.getElementById('page-tx-detail') && document.getElementById('page-tx-detail').classList.contains('slide-in');
-<<<<<<< Updated upstream
-    if (!anyOpen && !txOpen && !txDetailOpen) {
-      
-    }
-=======
->>>>>>> Stashed changes
     history.back();
   }
 
@@ -3634,12 +3613,6 @@
     if (page === 'home') {
       pageTx.classList.remove('slide-in');
       pageHome.classList.remove('slide-out');
-<<<<<<< Updated upstream
-      if (nav)
-    } else if (PLACEHOLDER_PAGES.includes(page)) {
-      // handled by navigateBack
-=======
->>>>>>> Stashed changes
     }
   });
 
