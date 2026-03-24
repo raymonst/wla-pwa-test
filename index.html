@@ -167,14 +167,11 @@
 
   html {
     height: 100%;
-    height: -webkit-fill-available;
   }
 
   body {
     background: white;
     height: 100%;
-    height: -webkit-fill-available;
-    height: 100svh;
     font-family: var(--font-body-md-family);
     overflow: hidden;
     overscroll-behavior: none;
@@ -250,6 +247,7 @@
     gap: 0;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .scroll-content::-webkit-scrollbar { display: none; }
 
@@ -611,7 +609,23 @@
     align-items: center;
     padding-top: var(--space-300);
     padding-bottom: 0;
+<<<<<<< Updated upstream
     z-index: 20;
+=======
+    z-index: 100;
+    pointer-events: auto;
+  }
+  /* In PWA standalone mode, extend nav to cover home indicator area */
+  @media (display-mode: standalone) {
+    .page {
+      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    }
+    .bottom-nav {
+      height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      align-items: flex-start;
+    }
+>>>>>>> Stashed changes
   }
   /* In PWA standalone mode, extend nav to cover home indicator area */
   @media (display-mode: standalone) {
@@ -665,12 +679,17 @@
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    height: 100svh;
+    /* dvh fills the full screen including home indicator zone on iOS PWA.
+       Falls back to -webkit-fill-available for older Safari, then 100vh. */
+    height: 100vh;
     height: -webkit-fill-available;
+    height: 100dvh;
     position: relative;
     overflow: hidden;
     overscroll-behavior: none;
-    touch-action: pan-y; /* allow vertical scroll, block horizontal swipe */
+    /* touch-action intentionally omitted here — setting it on the shell
+       blocks tap delivery to the fixed bottom-nav on iOS. It is set on
+       individual scroll containers instead. */
   }
   .page {
     position: absolute;
@@ -748,6 +767,7 @@
     padding: 0 var(--space-app-margin) 32px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .tx-scroll::-webkit-scrollbar { display: none; }
   .filter-bar {
@@ -824,6 +844,12 @@
     pointer-events: none;
     z-index: 0;
   }
+
+  @media (display-mode: standalone) {
+    .tab-page {
+      bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+    }
+  }
   .tab-page.tab-active {
     opacity: 1;
     pointer-events: auto;
@@ -873,6 +899,7 @@
     padding: 0 var(--space-app-margin) 96px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .pay-scroll::-webkit-scrollbar { display: none; }
 
@@ -1928,6 +1955,7 @@
     gap: 24px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .card-scroll::-webkit-scrollbar { display: none; }
 
@@ -2238,6 +2266,7 @@
     gap: 24px;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
   }
   .perks-scroll::-webkit-scrollbar { display: none; }
 
@@ -2588,28 +2617,9 @@
   .tx-detail-dispute-btn:active { opacity: 0.7; }
 
 
-  /* iOS PWA viewport fix */
-  .app-shell {
-    height: calc(var(--real-vh, 1vh) * 100) !important;
-  }
 </style>
 </head>
 <body>
-<script>
-  function setRealVh() {
-    // On iOS PWA, window.innerHeight includes the home indicator area.
-    // visualViewport.height is the actual usable height.
-    const h = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    document.documentElement.style.setProperty('--real-vh', (h * 0.01) + 'px');
-  }
-  setRealVh();
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', setRealVh);
-  } else {
-    window.addEventListener('resize', setRealVh);
-  }
-</script>
-
 <div class="app-shell">
 <div class="page page--home tab-page tab-active" id="page-home">
 
@@ -3451,7 +3461,8 @@
 
 
 </div><!-- /app-shell -->
-<!-- ── PERSISTENT BOTTOM NAV (app-shell level) ─────────────────────── -->
+
+<!-- ── PERSISTENT BOTTOM NAV ─────────────────────────────────────────── -->
 <nav class="bottom-nav" id="main-nav">
 
     <!-- Wallet -->
@@ -3609,21 +3620,26 @@
     });
     const txOpen = pageTx && pageTx.classList.contains('slide-in');
     const txDetailOpen = document.getElementById('page-tx-detail') && document.getElementById('page-tx-detail').classList.contains('slide-in');
+<<<<<<< Updated upstream
     if (!anyOpen && !txOpen && !txDetailOpen) {
       
     }
+=======
+>>>>>>> Stashed changes
     history.back();
   }
 
   window.addEventListener('popstate', (e) => {
     const page = e.state?.page ?? 'home';
-    const nav = document.getElementById('main-nav');
     if (page === 'home') {
       pageTx.classList.remove('slide-in');
       pageHome.classList.remove('slide-out');
+<<<<<<< Updated upstream
       if (nav)
     } else if (PLACEHOLDER_PAGES.includes(page)) {
       // handled by navigateBack
+=======
+>>>>>>> Stashed changes
     }
   });
 
