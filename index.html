@@ -599,7 +599,7 @@
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    height: var(--nav-h);
+    height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
     background: rgba(255,255,255,0.97);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -608,19 +608,14 @@
     display: flex;
     align-items: center;
     padding-top: var(--space-300);
-    padding-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 100;
     pointer-events: auto;
   }
-  /* In PWA standalone mode, extend nav to cover home indicator area */
+  /* In PWA standalone mode, push page content up above the nav + home indicator */
   @media (display-mode: standalone) {
     .page {
       bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
-    }
-    .bottom-nav {
-      height: calc(var(--nav-h) + env(safe-area-inset-bottom));
-      padding-bottom: env(safe-area-inset-bottom);
-      align-items: flex-start;
     }
   }
   .nav-item {
